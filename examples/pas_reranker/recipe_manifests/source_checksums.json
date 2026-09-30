@@ -1,0 +1,62 @@
+{
+  "pas_train_pairs": {
+    "path": "/workspace/data/PAS_Datasets/NVIDIA_PAS_Filtered_06152026_V3.1_tao_ft_metadata_base_plus_val_test_medium_attr_matched_aug_val20_accessory_v2.1/train_pairs.json",
+    "sha256": "6f7f1ced43c4a17b349df59b9fdc2afba39b8f64274e3e4b65b5652e16b9cd3b"
+  },
+  "pas_val_pairs": {
+    "path": "/workspace/data/PAS_Datasets/NVIDIA_PAS_Filtered_06152026_V3.1_tao_ft_metadata_base_plus_val_test_medium_attr_matched_aug_val20_accessory_v2.1/val_pairs.json",
+    "sha256": "4240616b27c33ab5edd40a341f1195aa16a299f50c3740d91d896bafc64f77e1"
+  },
+  "siglip2_step03906": {
+    "path": "/workspace/jiayin/models/model_epoch_001_step_03906.pth",
+    "sha256": "aa69ad7d7b588eaf4f4b2f280cd26307f9e218596865d672dfd15231c2cc2286"
+  },
+  "mined_balanced750k": {
+    "path": "/workspace/jiayin/cosmos-rl/data/pas_cr3_step03906/train_deployed_top20_k20_trainonly750k_seed880821.json",
+    "sha256": "591d608a9eb767edc5f28c0845236828d0a16a9f35994ccfd5a140fa65fa0c30"
+  },
+  "mined_remaining": {
+    "path": "/workspace/jiayin/cosmos-rl/data/pas_cr3_step03906/train_deployed_top20_k20_remaining_after750k_seed880822.json",
+    "sha256": "6d324c60d61541234c74a5961600c134ca26478cb1f1e24e45b0b23509d7c8c1"
+  },
+  "cr3_config": {
+    "path": "/workspace/jiayin/models/Cosmos3-Nano-VLM/config.json",
+    "sha256": "fd5dc388a77ef5bd82601ecfc74ca96c56857d60bda94836a0c8148f381bf040"
+  },
+  "cr3_preprocessor": {
+    "path": "/workspace/jiayin/models/Cosmos3-Nano-VLM/preprocessor_config.json",
+    "sha256": "93585062a80db5e8ca038efc7726a3e6411d9db948472d81d63c6303993be8c5"
+  },
+  "cr3_weights_1": {
+    "path": "/workspace/jiayin/models/Cosmos3-Nano-VLM/model-00001-of-00004.safetensors",
+    "sha256": "0c2f3770007e55d06164af2f66555ece4aff99f8cc297f65fb5ae1af2ab5b7d0"
+  },
+  "cr3_weights_2": {
+    "path": "/workspace/jiayin/models/Cosmos3-Nano-VLM/model-00002-of-00004.safetensors",
+    "sha256": "ef282bddfb75d4a6b09e2f6649501488d132722cad64b6b75edb4f8b82ccbf25"
+  },
+  "cr3_weights_3": {
+    "path": "/workspace/jiayin/models/Cosmos3-Nano-VLM/model-00003-of-00004.safetensors",
+    "sha256": "3d511bb6a36bfabe55c23024af0aea26536d4f00ac309bab39db79a88bfd7039"
+  },
+  "cr3_weights_4": {
+    "path": "/workspace/jiayin/models/Cosmos3-Nano-VLM/model-00004-of-00004.safetensors",
+    "sha256": "9029278de22890382cdd6719f43c66a1c70a3dfb252413a79c702cf09bb8dd68"
+  },
+  "query_indices_balanced250k_seed880821": {
+    "path": "/workspace/jiayin/cosmos-rl/data/pas_cr3_step03906/query_indices_trainonly_balanced250k_seed880821.json",
+    "sha256": "2e885ec5eb4e038eedddc4f21ee4b6baba75f4608fbf2ebc36c28a8a806ffcf2"
+  },
+  "query_indices_remaining_after750k_seed880822": {
+    "path": "/workspace/jiayin/cosmos-rl/data/pas_cr3_step03906/query_indices_trainonly_remaining_after750k_seed880822.json",
+    "sha256": "ec82a8f6331fe79f4232ae1150ced94c3b7dfe751d31ca660091e895d600d37a"
+  },
+  "attribute_train": {
+    "path": "/workspace/jiayin/cosmos-rl/outputs/pas_cr3_attribute_replay_records_alltrain/train_records.json",
+    "sha256": "e2ab5b98cfcc4becc15fe628915e7466f9e4de46373f9928dc7c274a808e0b7a"
+  },
+  "attribute_val": {
+    "path": "/workspace/jiayin/cosmos-rl/outputs/pas_cr3_attribute_replay_records_alltrain/val_records.json",
+    "sha256": "af0486448f116905453995d70b4cf60b0c112f9594aa9dce025d56e7a81e35d3"
+  }
+}

@@ -1,0 +1,432 @@
+{
+    "custom": {
+        "system_prompt": "",
+        "fp32_trainable_master_only": true,
+        "train_dataset": {
+            "annotation_path": [
+                "/workspace/jiayin/cosmos-rl/data/pas_cr3_step03906/train_deployed_top20_k20_trainonly750k_seed880821.json",
+                "/workspace/jiayin/cosmos-rl/data/pas_cr3_step03906/train_deployed_top20_k20_remaining_after750k_seed880822.json"
+            ],
+            "media_path": "/workspace/data/PAS_Datasets/NVIDIA_PAS_Filtered_06152026_V3.1_tao_ft_metadata_base_plus_val_test_medium_attr_matched_aug_val20_accessory_v2.1/images",
+            "response_mode": "binary"
+        },
+        "vision": {
+            "nframes": 1,
+            "max_pixels": 81920
+        },
+        "loss": {
+            "rank_mode": "probability_mass",
+            "rank_weight": 1.0,
+            "point_weight": 1.0,
+            "point_mode": "class_balanced",
+            "negative_point_weight": 1.0,
+            "teacher_weight": 0.0,
+            "rank_temperature": 1.0,
+            "point_temperature": 1.0,
+            "candidate_group_size": 20,
+            "positive_response": "<answer>yes</answer>",
+            "negative_response": "<answer>no</answer>"
+        },
+        "structured_attribute": {
+            "train_records_path": "/workspace/jiayin/cosmos-rl/outputs/pas_cr3_attribute_replay_records_alltrain/train_records.json",
+            "validation_records_path": "/workspace/jiayin/cosmos-rl/outputs/pas_cr3_attribute_replay_records_alltrain/val_records.json",
+            "attribute_vocab_path": "/workspace/data/PAS_Datasets/NVIDIA_PAS_Filtered_06152026_V3.1_tao_ft_metadata_base_plus_val_test_medium_attr_matched_aug_val20_accessory_v2.1/attribute_vocab.json",
+            "loss_weight": 0.25,
+            "seed": 160901
+        },
+        "visual_cache": {
+            "resident_shards": 8,
+            "slice_reads": false,
+            "manifests": [
+                "/tmp/pas_cr3_block24_prefix_step03906_trainonly750k_star/manifest_rank00.json",
+                "/tmp/pas_cr3_block24_prefix_step03906_trainonly750k_star/manifest_rank01.json",
+                "/tmp/pas_cr3_block24_prefix_step03906_trainonly750k_star/manifest_rank02.json",
+                "/tmp/pas_cr3_block24_prefix_step03906_trainonly750k_star/manifest_rank03.json",
+                "/tmp/pas_cr3_block24_prefix_step03906_trainonly750k_star/manifest_rank04.json",
+                "/tmp/pas_cr3_block24_prefix_step03906_trainonly750k_star/manifest_rank05.json",
+                "/tmp/pas_cr3_block24_prefix_step03906_trainonly750k_star/manifest_rank06.json",
+                "/tmp/pas_cr3_block24_prefix_step03906_trainonly750k_star/manifest_rank07.json",
+                "/tmp/pas_cr3_block24_prefix_step03906_top50_supplement4474_clean/manifest_rank00.json",
+                "/tmp/pas_cr3_block24_prefix_step03906_top50_supplement4474_clean/manifest_rank01.json",
+                "/tmp/pas_cr3_block24_prefix_step03906_top50_supplement4474_clean/manifest_rank02.json",
+                "/tmp/pas_cr3_block24_prefix_step03906_top50_supplement4474_clean/manifest_rank03.json",
+                "/tmp/pas_cr3_block24_prefix_step03906_top50_supplement4474_clean/manifest_rank04.json",
+                "/tmp/pas_cr3_block24_prefix_step03906_top50_supplement4474_clean/manifest_rank05.json",
+                "/tmp/pas_cr3_block24_prefix_step03906_top50_supplement4474_clean/manifest_rank06.json",
+                "/tmp/pas_cr3_block24_prefix_step03906_top50_supplement4474_clean/manifest_rank07.json"
+            ]
+        }
+    },
+    "train": {
+        "train_policy": {
+            "type": "sft",
+            "trainer_type": "pas_rank_point_sft",
+            "dataset": {
+                "name": "freshcr3_rank32_k20_alltrain_rankpoint_attr025_fp32_e3_seed160901",
+                "subset": "",
+                "revision": "",
+                "split": [
+                    ""
+                ],
+                "test_size": 0,
+                "local_dir": ""
+            },
+            "mini_batch": 20,
+            "dataloader_shuffle": true,
+            "dataloader_seed": 160901,
+            "dataloader_batch_size": 80,
+            "enable_dataset_cache": false,
+            "dataloader_num_workers": 4,
+            "dataloader_prefetch_factor": 2,
+            "dataloader_drop_last": true,
+            "data_dispatch_as_rank_in_mesh": false,
+            "conversation_column_name": "conversations",
+            "system_prompt": "",
+            "balance_dp_token": true,
+            "enable_dp_load_balancing": false,
+            "load_balanced_pool_size": 32,
+            "load_balanced_max_tokens_for_batch": null,
+            "load_balanced_batching_strategy": "prefer_closest",
+            "load_balanced_batches_per_optimizer_step": 1,
+            "dataloader_broadcast": false
+        },
+        "optm_name": "AdamW",
+        "optm_lr": [
+            2e-05,
+            5e-06,
+            5e-06,
+            0.0
+        ],
+        "optm_impl": "fused",
+        "optm_weight_decay": 0.01,
+        "optm_betas": [
+            0.9,
+            0.999
+        ],
+        "optm_warmup_steps": 500,
+        "optm_warmup_epochs": null,
+        "optm_warmup_start_factor": 0.0,
+        "optm_decay_ratio": null,
+        "optm_decay_type": "cosine",
+        "optm_min_lr_factor": 0.1,
+        "optm_grad_norm_clip": 1.0,
+        "ema_enable": false,
+        "ema_decay": 0.9999,
+        "ema_update_step_interval": 0,
+        "master_dtype": "float32",
+        "param_dtype": "bfloat16",
+        "transfer_dtype": "float32",
+        "logprob_dtype": "float32",
+        "fsdp_reduce_dtype": "float32",
+        "fsdp_offload": false,
+        "fsdp_reshard_after_forward": "default",
+        "train_batch_per_replica": 80,
+        "fp8": {
+            "enable_fp8": false,
+            "fp8_recipe": "dynamic_scaling",
+            "quant_recipe": "rowwise"
+        },
+        "fp4": {
+            "enable_fp4": false,
+            "fp4_recipe": "dynamic_scaling",
+            "quant_recipe": "rowwise"
+        },
+        "ckpt": {
+            "enable_checkpoint": true,
+            "save_freq": 500,
+            "save_freq_in_epoch": 0,
+            "save_mode": "sync",
+            "max_keep": 20,
+            "export_safetensors": true,
+            "upload_hf": false,
+            "hf_repo_name": "Comos-Reason1",
+            "upload_s3": false,
+            "s3_bucket": null,
+            "s3_prefix": "outputs"
+        },
+        "resume": "/workspace/jiayin/cosmos-rl/outputs/pas_cr3_fresh_rank32_k20_all_structured_attribute/20260816083308/checkpoints/step_1906/policy",
+        "epoch": 3,
+        "output_dir": "/workspace/jiayin/cosmos-rl/outputs/pas_cr3_fresh_rank32_k20_all_structured_attribute/20260816083308",
+        "timestamp": "20260816083308",
+        "epsilon": 1e-08,
+        "async_tp_enabled": false,
+        "compile": false,
+        "sync_weight_interval": 1,
+        "coalesce_weight_sync": false,
+        "deterministic": false,
+        "activation_offload": false,
+        "fa_version": null,
+        "seed": 160901,
+        "local_dataset": true,
+        "force_use_hf": false,
+        "non_text": false,
+        "max_num_steps": 200000,
+        "sequence_packing": false,
+        "save_ckpt_at_exit": true,
+        "signal_to_handle": [
+            "SIGUSR1"
+        ]
+    },
+    "rollout": {
+        "parallelism": {
+            "n_init_replicas": 1,
+            "tp_size": 2,
+            "cp_size": 1,
+            "ep_size": 1,
+            "dp_shard_size": 1,
+            "pp_size": 1,
+            "pp_dynamic_shape": false,
+            "pp_micro_batch_size": 1,
+            "dp_replicate_size": 1,
+            "pp_schedule": "Interleaved1F1B",
+            "pp_layers_per_stage": 2
+        },
+        "enforce_eager": true,
+        "include_stop_str_in_output": false,
+        "gpu_memory_utilization": 0.8,
+        "enable_chunked_prefill": false,
+        "max_response_length": 2048,
+        "n_generation": 1,
+        "n_generation_to_batch": false,
+        "n_generation_mini_batch": null,
+        "batch_size": 1,
+        "quantization": "none",
+        "seed": null,
+        "sampling_config": {
+            "temperature": 1.0,
+            "top_p": 1.0,
+            "top_k": -1,
+            "repetition_penalty": 1.0,
+            "use_flashinfer": false
+        },
+        "vllm_use_flashinfer": false,
+        "backend": "vllm",
+        "multi_turn_config": {
+            "enable": false,
+            "enable_tools": false,
+            "enable_thinking": false,
+            "custom_chat_template_path": null,
+            "max_assistant_turns": 5,
+            "add_generation_prompt": true,
+            "continue_final_message": false
+        },
+        "mode": "sync",
+        "async_config": {
+            "max_concurrent_requests": 10
+        },
+        "async_r2r_sync": "disabled",
+        "prefetch_rollout": false,
+        "broadcast_all_params": false
+    },
+    "policy": {
+        "parallelism": {
+            "n_init_replicas": 1,
+            "tp_size": 1,
+            "cp_size": 1,
+            "ep_size": 1,
+            "dp_shard_size": 1,
+            "pp_size": 1,
+            "pp_dynamic_shape": false,
+            "pp_micro_batch_size": 1,
+            "dp_replicate_size": 8,
+            "pp_schedule": "Interleaved1F1B",
+            "pp_layers_per_stage": 2
+        },
+        "diffusers": {
+            "dtype": "float32",
+            "is_video": false,
+            "max_prompt_length": 300,
+            "weighting_scheme": "logit_normal",
+            "train_flow_shift": 3.0,
+            "offload": true,
+            "logit_mean": 0.0,
+            "logit_std": 1.0,
+            "inference_size": [
+                1024,
+                1024
+            ],
+            "inference_frames": 41,
+            "train_frames": 41,
+            "timesteps_fraction": 1.0,
+            "nft_beta": 1.0,
+            "weight_copy_decay_type": 0,
+            "lora": null,
+            "sample": {
+                "num_steps": 40,
+                "eval_num_steps": 40,
+                "guidance_scale": 4.5,
+                "global_std": true,
+                "noise_level": 1.0,
+                "deterministic_sampling": false,
+                "solver": "dpm2"
+            },
+            "tokenizer": {
+                "chunk_duration": 81,
+                "load_mean_std": false,
+                "compile_encode": false,
+                "temporal_window": 16
+            }
+        },
+        "is_diffusers": false,
+        "model_name_or_path": "/tmp/Cosmos3-Nano-VLM-clean",
+        "model_safetensor_path": null,
+        "model_revision": null,
+        "model_max_length": 1024,
+        "model_gradient_checkpointing": true,
+        "lora": {
+            "r": 32,
+            "lora_names": [
+                "default"
+            ],
+            "lora_path": null,
+            "lora_alpha": 64.0,
+            "lora_dropout": 0.0,
+            "target_modules": [
+                "q_proj",
+                "k_proj",
+                "v_proj",
+                "o_proj",
+                "up_proj",
+                "down_proj",
+                "gate_proj",
+                "model.visual.blocks.24.attn.qkv",
+                "model.visual.blocks.24.attn.proj",
+                "model.visual.blocks.24.mlp.linear_fc1",
+                "model.visual.blocks.24.mlp.linear_fc2",
+                "model.visual.blocks.25.attn.qkv",
+                "model.visual.blocks.25.attn.proj",
+                "model.visual.blocks.25.mlp.linear_fc1",
+                "model.visual.blocks.25.mlp.linear_fc2",
+                "model.visual.blocks.26.attn.qkv",
+                "model.visual.blocks.26.attn.proj",
+                "model.visual.blocks.26.mlp.linear_fc1",
+                "model.visual.blocks.26.mlp.linear_fc2",
+                "model.visual.merger.linear_fc1",
+                "model.visual.merger.linear_fc2"
+            ],
+            "primary_adapter": null,
+            "use_rslora": false,
+            "modules_to_save": null,
+            "alpha_pattern": null,
+            "r_pattern": null,
+            "init_lora_weights": true
+        },
+        "trainable_map": null,
+        "freeze_pattern": null,
+        "trainable_pattern": null,
+        "enable_liger_kernel": false,
+        "enable_liger_cross_entropy": false,
+        "enable_liger_fused_cross_entropy": true,
+        "aux_loss_coeff": 0.0
+    },
+    "logging": {
+        "logger": [
+            "console",
+            "wandb"
+        ],
+        "log_interval": 10,
+        "multi_modal_log_interval": null,
+        "project_name": "cr3-pas-reranker",
+        "group_name": "pas-v31-fresh-rank32-k20-all-structured-attribute",
+        "experiment_name": "freshcr3_rank32_k20_alltrain_rankpoint_attr025_fp32_e3_seed160901",
+        "report_mfu": false
+    },
+    "profiler": {
+        "enable_profiler": false,
+        "enable_nsys": false,
+        "sub_profiler_config": {
+            "do_profile": false,
+            "active_steps": 1,
+            "warmup_steps": 1,
+            "wait_steps": 1,
+            "rank_filter": [],
+            "record_shape": false,
+            "profile_memory": false,
+            "with_stack": false,
+            "with_modules": false
+        }
+    },
+    "validation": {
+        "enable": false,
+        "val_before_train": false,
+        "freq": 20,
+        "freq_in_epoch": 0,
+        "batch_size": null,
+        "dataset": {
+            "name": "",
+            "subset": "",
+            "revision": "",
+            "split": [
+                "train"
+            ],
+            "test_size": null,
+            "local_dir": ""
+        },
+        "dataloader_num_workers": 0,
+        "dataloader_prefetch_factor": null,
+        "enable_dataset_cache": null,
+        "temperature": 0.0,
+        "top_p": null,
+        "top_k": 1,
+        "repetition_penalty": 1.0,
+        "n_generation": 1,
+        "max_response_length": null,
+        "reward_function": {},
+        "use_remote_reward": null,
+        "remote_reward": null
+    },
+    "distillation": {
+        "enable": false,
+        "parallelism": {
+            "n_init_replicas": 1,
+            "tp_size": 2,
+            "cp_size": 1,
+            "ep_size": 1,
+            "dp_shard_size": 1,
+            "pp_size": 1,
+            "pp_dynamic_shape": false,
+            "pp_micro_batch_size": 1,
+            "dp_replicate_size": 1,
+            "pp_schedule": "Interleaved1F1B",
+            "pp_layers_per_stage": 2
+        },
+        "model_name_or_path": "Qwen/Qwen2.5-VL-7B-Instruct",
+        "model_revision": null,
+        "compile": true,
+        "master_dtype": "float32",
+        "param_dtype": "bfloat16",
+        "logprob_dtype": "float32",
+        "fsdp_reduce_dtype": "float32",
+        "fsdp_offload": false,
+        "fsdp_reshard_after_forward": "never",
+        "batch_size_per_replica": 8,
+        "max_token_len_per_mini_batch": null,
+        "sequence_packing": false,
+        "mini_batch": 1,
+        "seed": null,
+        "kl_penalty_coef": 1.0,
+        "kl_discount_factor": 0.0,
+        "include_prompt": false,
+        "top_k": 0,
+        "jsd_beta": 0.5,
+        "trainer_token_ids_from_teacher": false,
+        "rollout_top_k_recompute": false
+    },
+    "vla": {
+        "vla_type": "openvla-oft",
+        "num_envs": 1,
+        "use_proprio": false,
+        "proprio_dim": 7,
+        "num_images_in_input": 1,
+        "training_chunk_size": 16,
+        "save_video": false,
+        "continuous": false,
+        "trace_verbosity": 1,
+        "unnorm_key": "libero_10_no_noops",
+        "max_steps": null,
+        "use_subprocess": null
+    },
+    "redis": "13132",
+    "eth_ips": "10.53.23.190;10.50.116.230;100.64.252.184;169.254.66.66;172.20.0.10;10.50.148.160",
+    "mode": "disaggregated"
+}

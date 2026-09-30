@@ -271,3 +271,14 @@ nemotron_vl/*.md
 nemotron_vl/dev_docs
 */nohup.out
 docs/plans
+
+# PAS CR3 reproduction outputs
+/reproduction/
+/.venv-train/
+
+# Git-sized split CR3 Nano adapter and its visual LoRA.
+!/checkpoints/cr3_nano_step8000/
+!/checkpoints/cr3_nano_step8000/language/
+!/checkpoints/cr3_nano_step8000/visual/
+!/checkpoints/cr3_nano_step8000/language/adapter_model.safetensors.part-*
+!/checkpoints/cr3_nano_step8000/visual/adapter_model.safetensors

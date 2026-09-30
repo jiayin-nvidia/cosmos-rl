@@ -1,0 +1,36 @@
+{
+  "date_utc": "2026-09-30",
+  "test_queries": 69633,
+  "execution": "Two batch workers with eight A100 GPUs each; 16 independent test shards per mode",
+  "public_cr3": {
+    "reference_overall_percent": {"mAP": 52.22, "Rank-1": 54.21, "Rank-5": 70.46},
+    "fresh_overall_percent": {"mAP": 52.22692, "Rank-1": 54.19844, "Rank-5": 70.48382},
+    "fresh_trace": "reproduction/full_test/public_cr3/scalar_plus_accessories_full_dedup_cosmos_reason_depth20_k5/scalar_plus_accessories/query_rankings.jsonl",
+    "saved_trace_comparison": {
+      "different_retriever_head_queries": 2,
+      "different_candidate_set_queries": 1,
+      "different_rerank_order_queries": 64693,
+      "different_rank1_queries": 1255,
+      "different_rank5_queries": 134,
+      "mean_abs_candidate_score_delta": 0.05303682345062655
+    }
+  },
+  "finetuned_siglip2_zero_shot_cr3": {
+    "reference_rerank_overall_percent": {"mAP": 68.29, "Rank-1": 63.62, "Rank-5": 92.57},
+    "fresh_rerank_overall_percent": {"mAP": 68.30967, "Rank-1": 63.70543, "Rank-5": 92.54664},
+    "fresh_trace": "reproduction/full_test/finetuned_zeroshot/scalar_plus_accessories_full_dedup_cosmos_reason_depth20_k5/scalar_plus_accessories/query_rankings.jsonl",
+    "saved_trace_comparison": {
+      "different_retriever_head_queries": 4,
+      "different_candidate_set_queries": 1,
+      "different_rerank_order_queries": 64161,
+      "different_rank1_queries": 2213,
+      "different_rank5_queries": 445,
+      "mean_abs_candidate_score_delta": 0.05200371674908773
+    },
+    "reference_test_selected_fusion": {"alpha": 0.99331, "overall_percent": {"mAP": 79.94, "Rank-1": 81.65, "Rank-5": 97.31}},
+    "fresh_test_selected_fusion": {"alpha": 0.99239, "overall_percent": {"mAP": 79.92854, "Rank-1": 81.59493, "Rank-5": 97.32311}},
+    "fusion_sweep": "reproduction/full_test/finetuned_zeroshot_fusion/summary.json",
+    "fusion_caveat": "Alpha is selected on the test set, so this is a diagnostic upper bound rather than a held-out validation result."
+  },
+  "interpretation": "Fresh inference is close to the pasted table, but neither baseline reranker is an exact rounded-cell reproduction. Query order was aligned by dataset, query type, and caption for the saved-versus-fresh comparisons."
+}

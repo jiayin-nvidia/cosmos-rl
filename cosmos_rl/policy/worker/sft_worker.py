@@ -47,6 +47,7 @@ from cosmos_rl.policy.config import (
 )
 
 from cosmos_rl.policy.trainer.sampler import SkippingSampler
+from cosmos_rl.policy.trainer.optm import build_lr_schedulers
 import cosmos_rl.utils.cache as cache
 from cosmos_rl.policy.trainer.llm_trainer.sft_trainer import SFTTrainer
 from cosmos_rl.policy.worker.base import PolicyWorkerBase
@@ -578,6 +579,7 @@ class SFTPolicyWorker(PolicyWorkerBase):
                 )
             return data_loader
 
+        unskipped_steps_per_epoch = None
         if self.config.train.resume and self.train_step > 0:
             """
             Note: Here both shuffle and no shuffle samplers are supported for deterministic resuming.
@@ -612,6 +614,7 @@ class SFTPolicyWorker(PolicyWorkerBase):
                 total_steps_per_epoch = len(
                     get_train_data_loader(self.train_sampler, self.train_batch_sampler)
                 )
+                unskipped_steps_per_epoch = total_steps_per_epoch
                 data_loader_bias = self.train_step % total_steps_per_epoch
                 data_loader_bias *= self.config.train.train_batch_per_replica
                 logger.info(
@@ -720,8 +723,8 @@ class SFTPolicyWorker(PolicyWorkerBase):
             )
 
         steps_by_dataset = (
-            self.ckpt_total_steps
-            if self.ckpt_total_steps > 0
+            unskipped_steps_per_epoch * self.epoch
+            if unskipped_steps_per_epoch is not None
             else len(self.train_data_loader) * self.epoch
         )
 
@@ -734,6 +737,52 @@ class SFTPolicyWorker(PolicyWorkerBase):
             self.total_steps = min(steps_by_dataset, self.config.train.max_num_steps)
         else:
             self.total_steps = steps_by_dataset
+
+        if self.config.train.resume and self.train_step > 0:
+            if (
+                getattr(self.trainer, "lr_schedulers", None) is not None
+                and self.ckpt_total_steps > 0
+                and self.ckpt_total_steps != steps_by_dataset
+            ):
+                # LambdaLR does not serialize its lambda, so a checkpoint saved
+                # at a temporary max_num_steps boundary would otherwise rebuild
+                # a scheduler whose decay horizon ends at that boundary. Rebind
+                # the loaded scheduler state to the actual dataset horizon while
+                # preserving the optimizer LR used by the next exact-resume
+                # update.
+                scheduler_state = self.trainer.lr_schedulers.state_dict()
+                loaded_lrs = [
+                    scheduler.get_last_lr()
+                    for scheduler in self.trainer.lr_schedulers
+                ]
+                self.trainer.lr_schedulers = build_lr_schedulers(
+                    self.trainer.optimizers,
+                    self.config,
+                    steps_by_dataset,
+                )
+                self.trainer.lr_schedulers.load_state_dict(scheduler_state)
+                for scheduler, scheduler_lrs in zip(
+                    self.trainer.lr_schedulers, loaded_lrs, strict=True
+                ):
+                    for param_group, lr in zip(
+                        scheduler.optimizer.param_groups,
+                        scheduler_lrs,
+                        strict=True,
+                    ):
+                        param_group["lr"] = lr
+                logger.info(
+                    "Rebound resumed LR scheduler horizon from %s to %s",
+                    self.ckpt_total_steps,
+                    steps_by_dataset,
+                )
+            logger.info(
+                "Resume horizon resolved to step %s/%s "
+                "(checkpoint horizon=%s, dataset horizon=%s)",
+                self.train_step,
+                self.total_steps,
+                self.ckpt_total_steps,
+                steps_by_dataset,
+            )
 
         # Calculate the step interval to save the checkpoint
         if self.config.train.ckpt.save_freq_in_epoch > 0:
@@ -1034,10 +1083,6 @@ class SFTPolicyWorker(PolicyWorkerBase):
                                 f"[SFT] Error calling custom logger function: {e}"
                             )
 
-                if self.train_step >= self.total_steps:
-                    stop_training = True
-                    break  # break outer epoch loop
-
                 val_avg_loss = self.validate(
                     current_epoch=cur_epoch, is_last_step=False
                 )
@@ -1049,6 +1094,7 @@ class SFTPolicyWorker(PolicyWorkerBase):
                     pp_last_stage=False,
                     is_last_step=False,
                     val_score=val_avg_loss,
+                    do_save=self.train_step in self.config.train.ckpt.save_steps,
                 )
 
                 self.profiler.step()
@@ -1063,20 +1109,35 @@ class SFTPolicyWorker(PolicyWorkerBase):
                     self.signal_handler.release()
                     break
 
+                if self.train_step >= self.total_steps:
+                    stop_training = True
+                    break  # break outer epoch loop
+
             if stop_training:
                 break
             cur_epoch += 1
 
         # Finally: validation and save checkpoint
         val_avg_loss = self.validate(current_epoch=cur_epoch, is_last_step=True)
-        self.trainer.checkpointing(
-            total_steps=self.total_steps,
-            train_step=self.train_step,
-            save_freq=self._save_freq,
-            is_last_step=True,
-            pp_last_stage=pp_last_stage,
-            val_score=val_avg_loss,
+        # A downstream evaluator may already be reading this complete export.
+        already_exported = (
+            self.config.train.ckpt.enable_checkpoint
+            and self.config.train.ckpt.export_safetensors
+            and self.train_step > 0
+            and (
+                (self._save_freq > 0 and self.train_step % self._save_freq == 0)
+                or self.train_step in self.config.train.ckpt.save_steps
+            )
         )
+        if not already_exported:
+            self.trainer.checkpointing(
+                total_steps=self.total_steps,
+                train_step=self.train_step,
+                save_freq=self._save_freq,
+                is_last_step=True,
+                pp_last_stage=pp_last_stage,
+                val_score=val_avg_loss,
+            )
 
     def handle_shutdown(self):
         # handle the ckpt saving

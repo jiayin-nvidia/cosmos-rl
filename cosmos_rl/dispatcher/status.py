@@ -1936,6 +1936,7 @@ class PolicyStatusManager:
                 self.current_step % self.config.train.ckpt.save_freq == 0
                 and self.current_step > 0
             )
+        do_save = do_save or self.current_step in self.config.train.ckpt.save_steps
         # Finally check if checkpointing is enabled
         # Only `do_save` when checkpointing is enabled
         return do_save and self.config.train.ckpt.enable_checkpoint

@@ -1,0 +1,197 @@
+{
+  "protocol": "Fresh 16-A100 full-test rerank plus independent eight-A100 Val999; fit z-score statistics and fusion alpha on Val999 only, then apply unchanged to the test trace.",
+  "checkpoint": "checkpoints/cr3_nano_step8000",
+  "adapter_sha256": {
+    "language": "c6c994316eb1a727f349aa6ad0b6a84c52a88c9858fb952f95b8a9d6d341e750",
+    "visual": "a5e4724d5212d5a1a52df0f957d650e7988b7b23bfe4d3540fde1db402a0caaa"
+  },
+  "jobs": {
+    "full_test": "pas-ftcr3-16g-0930060900-xxf5",
+    "val999": "pas-cr3-val999-0930063750-6vf5"
+  },
+  "test_queries": 69633,
+  "validation_queries": 999,
+  "validation_selected_alpha": 0.315219999999999,
+  "max_absolute_table_delta_percentage_points": 0.07,
+  "comparison_rows": [
+    {
+      "mode": "Easy",
+      "row": "reranking",
+      "metrics": {
+        "mAP": {
+          "reference_percent": 67.83,
+          "replayed_percent": 67.83,
+          "delta_percentage_points": 0.0
+        },
+        "Rank-1": {
+          "reference_percent": 72.84,
+          "replayed_percent": 72.81,
+          "delta_percentage_points": -0.03
+        },
+        "Rank-5": {
+          "reference_percent": 95.33,
+          "replayed_percent": 95.32,
+          "delta_percentage_points": -0.01
+        }
+      }
+    },
+    {
+      "mode": "Easy",
+      "row": "validation_fusion",
+      "metrics": {
+        "mAP": {
+          "reference_percent": 71.2,
+          "replayed_percent": 71.2,
+          "delta_percentage_points": 0.0
+        },
+        "Rank-1": {
+          "reference_percent": 77.75,
+          "replayed_percent": 77.75,
+          "delta_percentage_points": 0.0
+        },
+        "Rank-5": {
+          "reference_percent": 96.66,
+          "replayed_percent": 96.66,
+          "delta_percentage_points": 0.0
+        }
+      }
+    },
+    {
+      "mode": "Medium",
+      "row": "reranking",
+      "metrics": {
+        "mAP": {
+          "reference_percent": 81.48,
+          "replayed_percent": 81.48,
+          "delta_percentage_points": 0.0
+        },
+        "Rank-1": {
+          "reference_percent": 80.43,
+          "replayed_percent": 80.44,
+          "delta_percentage_points": 0.01
+        },
+        "Rank-5": {
+          "reference_percent": 97.12,
+          "replayed_percent": 97.12,
+          "delta_percentage_points": 0.0
+        }
+      }
+    },
+    {
+      "mode": "Medium",
+      "row": "validation_fusion",
+      "metrics": {
+        "mAP": {
+          "reference_percent": 84.0,
+          "replayed_percent": 83.97,
+          "delta_percentage_points": -0.03
+        },
+        "Rank-1": {
+          "reference_percent": 84.52,
+          "replayed_percent": 84.45,
+          "delta_percentage_points": -0.07
+        },
+        "Rank-5": {
+          "reference_percent": 98.03,
+          "replayed_percent": 98.03,
+          "delta_percentage_points": 0.0
+        }
+      }
+    },
+    {
+      "mode": "Hard",
+      "row": "reranking",
+      "metrics": {
+        "mAP": {
+          "reference_percent": 91.67,
+          "replayed_percent": 91.68,
+          "delta_percentage_points": 0.01
+        },
+        "Rank-1": {
+          "reference_percent": 90.16,
+          "replayed_percent": 90.17,
+          "delta_percentage_points": 0.01
+        },
+        "Rank-5": {
+          "reference_percent": 99.27,
+          "replayed_percent": 99.27,
+          "delta_percentage_points": 0.0
+        }
+      }
+    },
+    {
+      "mode": "Hard",
+      "row": "validation_fusion",
+      "metrics": {
+        "mAP": {
+          "reference_percent": 92.94,
+          "replayed_percent": 92.95,
+          "delta_percentage_points": 0.01
+        },
+        "Rank-1": {
+          "reference_percent": 92.47,
+          "replayed_percent": 92.48,
+          "delta_percentage_points": 0.01
+        },
+        "Rank-5": {
+          "reference_percent": 99.56,
+          "replayed_percent": 99.56,
+          "delta_percentage_points": 0.0
+        }
+      }
+    },
+    {
+      "mode": "Overall",
+      "row": "reranking",
+      "metrics": {
+        "mAP": {
+          "reference_percent": 80.63,
+          "replayed_percent": 80.63,
+          "delta_percentage_points": 0.0
+        },
+        "Rank-1": {
+          "reference_percent": 81.35,
+          "replayed_percent": 81.35,
+          "delta_percentage_points": 0.0
+        },
+        "Rank-5": {
+          "reference_percent": 97.29,
+          "replayed_percent": 97.28,
+          "delta_percentage_points": -0.01
+        }
+      }
+    },
+    {
+      "mode": "Overall",
+      "row": "validation_fusion",
+      "metrics": {
+        "mAP": {
+          "reference_percent": 82.99,
+          "replayed_percent": 82.98,
+          "delta_percentage_points": -0.01
+        },
+        "Rank-1": {
+          "reference_percent": 85.09,
+          "replayed_percent": 85.07,
+          "delta_percentage_points": -0.02
+        },
+        "Rank-5": {
+          "reference_percent": 98.12,
+          "replayed_percent": 98.12,
+          "delta_percentage_points": 0.0
+        }
+      }
+    }
+  ],
+  "fresh_test_rerank_overall": {
+    "overall_mAP": 0.8062622120345861,
+    "overall_Rank-1": 0.8134792411643904,
+    "overall_Rank-5": 0.9728146137607169
+  },
+  "fresh_test_validation_fusion_overall": {
+    "overall_mAP": 0.829797882346302,
+    "overall_Rank-1": 0.8506886102853533,
+    "overall_Rank-5": 0.9812014418451022
+  },
+  "ignored_trace_root": "reproduction/supplied16"
+}

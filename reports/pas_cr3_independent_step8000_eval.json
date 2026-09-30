@@ -1,0 +1,211 @@
+{
+  "run": "Independent 32-GPU CR3 Nano training, stage 0 to step 2000 and resumed stage 1 to step 8000",
+  "global_candidate_batch": 640,
+  "data_parallel_ranks": 32,
+  "test_queries": 69633,
+  "validation_queries": 999,
+  "training_job": "pas-fast32-stage1-09300534-vd4w",
+  "evaluation_jobs": {
+    "full_test": "pas-ftcr3-16g-0930174848-47d7",
+    "val999": "pas-cr3-val999-0930175121-vc69"
+  },
+  "checkpoint_comparison_to_source": {
+    "run": "fast32/stage1",
+    "step": 8000,
+    "source": "/workspace/jiayin/cosmos-rl/outputs/pas_cr3_fresh_rank32_k20_smallbatch_resume_step2000_lepton",
+    "language": {
+      "tensor_count": 504,
+      "relative_l2": 0.11110758218645028,
+      "cosine": 0.9938317023633872
+    },
+    "visual": {
+      "tensor_count": 28,
+      "relative_l2": 0.017104213927129783,
+      "cosine": 0.9998537178321707
+    },
+    "loss_mae_steps_7501_8000": 0.020099985241889953,
+    "loss_count": 500
+  },
+  "adapter_sha256": {
+    "language": "d9c37315ebb20168b173c9cf9c5992b1b35ce75b0d520caba9b174d6a168379b",
+    "visual": "9be8d8ea522f223d61721509d2a14c6e55b6eab5f1de7cd24bfe854697a46238"
+  },
+  "reranking": {
+    "by_difficulty": {
+      "easy": {
+        "metrics": {
+          "mAP": 0.6778995487698358,
+          "Rank-1": 0.7283461018476791,
+          "Rank-5": 0.9536728255971159
+        },
+        "difference_percentage_points": {
+          "mAP": -0.04005,
+          "Rank-1": -0.00539,
+          "Rank-5": 0.03728
+        }
+      },
+      "medium": {
+        "metrics": {
+          "mAP": 0.8149801755462095,
+          "Rank-1": 0.8050002122331169,
+          "Rank-5": 0.9711787427310158
+        },
+        "difference_percentage_points": {
+          "mAP": 0.01802,
+          "Rank-1": 0.07002,
+          "Rank-5": -0.00213
+        }
+      },
+      "hard": {
+        "metrics": {
+          "mAP": 0.916872228906785,
+          "Rank-1": 0.9014821637916597,
+          "Rank-5": 0.9927566571763524
+        },
+        "difference_percentage_points": {
+          "mAP": 0.01722,
+          "Rank-1": -0.01178,
+          "Rank-5": 0.00567
+        }
+      },
+      "overall": {
+        "metrics": {
+          "mAP": 0.8062453902331576,
+          "Rank-1": 0.81366593425531,
+          "Rank-5": 0.9730013068516364
+        },
+        "difference_percentage_points": {
+          "mAP": -0.00546,
+          "Rank-1": 0.01659,
+          "Rank-5": 0.01013
+        }
+      }
+    },
+    "max_absolute_delta_percentage_points": 0.07002
+  },
+  "fusion_refitted_on_val999": {
+    "alpha": 0.200349999999999,
+    "validation_mAP": 0.854965258242328,
+    "score_statistics": {
+      "stage1": {
+        "mean": 0.10392954179665653,
+        "std": 0.036888489541104574
+      },
+      "cr3": {
+        "mean": -4.037790915437011,
+        "std": 4.57525905910979
+      }
+    },
+    "by_difficulty": {
+      "easy": {
+        "metrics": {
+          "mAP": 0.7064591569789332,
+          "Rank-1": 0.7674177557458315,
+          "Rank-5": 0.9650292924740874
+        },
+        "difference_percentage_points": {
+          "mAP": -0.55408,
+          "Rank-1": -1.00822,
+          "Rank-5": -0.15707
+        }
+      },
+      "medium": {
+        "metrics": {
+          "mAP": 0.8366038513662511,
+          "Rank-1": 0.8377690054756144,
+          "Rank-5": 0.9790738146780423
+        },
+        "difference_percentage_points": {
+          "mAP": -0.33961,
+          "Rank-1": -0.7431,
+          "Rank-5": -0.12262
+        }
+      },
+      "hard": {
+        "metrics": {
+          "mAP": 0.928152736044922,
+          "Rank-1": 0.9216630380170826,
+          "Rank-5": 0.99535253726344
+        },
+        "difference_percentage_points": {
+          "mAP": -0.12473,
+          "Rank-1": -0.3037,
+          "Rank-5": -0.02475
+        }
+      },
+      "overall": {
+        "metrics": {
+          "mAP": 0.8265316556143919,
+          "Rank-1": 0.8441256300891818,
+          "Rank-5": 0.9801818103485417
+        },
+        "difference_percentage_points": {
+          "mAP": -0.33683,
+          "Rank-1": -0.67744,
+          "Rank-5": -0.10182
+        }
+      }
+    },
+    "max_absolute_delta_percentage_points": 1.00822
+  },
+  "fusion_original_validation_calibration": {
+    "protocol": "Reuse the original Val999-fitted alpha and score statistics unchanged; evaluate the new validation and test traces without refitting.",
+    "calibration_source": "reports/pas_cr3_step8000_fusion_replay.json",
+    "alpha": 0.3178799999999988,
+    "validation_mAP_on_independent_checkpoint": 0.8505328210769368,
+    "by_difficulty": {
+      "easy": {
+        "metrics": {
+          "mAP": 0.7111084150476262,
+          "Rank-1": 0.7751239296980622,
+          "Rank-5": 0.9661559260928346
+        },
+        "difference_percentage_points": {
+          "mAP": -0.08916,
+          "Rank-1": -0.23761,
+          "Rank-5": -0.04441
+        }
+      },
+      "medium": {
+        "metrics": {
+          "mAP": 0.8400130961206465,
+          "Rank-1": 0.8449849314487032,
+          "Rank-5": 0.9802198735090624
+        },
+        "difference_percentage_points": {
+          "mAP": 0.00131,
+          "Rank-1": -0.02151,
+          "Rank-5": -0.00801
+        }
+      },
+      "hard": {
+        "metrics": {
+          "mAP": 0.9293690515182261,
+          "Rank-1": 0.924845084575448,
+          "Rank-5": 0.9955618824317535
+        },
+        "difference_percentage_points": {
+          "mAP": -0.00309,
+          "Rank-1": 0.01451,
+          "Rank-5": -0.00381
+        }
+      },
+      "overall": {
+        "metrics": {
+          "mAP": 0.829583885339917,
+          "Rank-1": 0.8501141700056007,
+          "Rank-5": 0.9810003877471888
+        },
+        "difference_percentage_points": {
+          "mAP": -0.03161,
+          "Rank-1": -0.07858,
+          "Rank-5": -0.01996
+        }
+      }
+    },
+    "max_absolute_delta_percentage_points": 0.23761
+  },
+  "interpretation": "Reranking closely reproduces the table. Applying its frozen validation calibration gives close fusion parity. Independently refitting Val999 selects a different alpha and gives larger test differences; these are separate protocols, with no test-based selection.",
+  "test_rankings": "reproduction/refinetuned_fast32/full_test/finetuned_step8000/scalar_plus_accessories_full_dedup_cosmos_reason_depth20_k5/scalar_plus_accessories/query_rankings.jsonl",
+  "validation_rankings": "reproduction/refinetuned_fast32/val999/finetuned_step8000/scalar_plus_accessories_val999_cosmos_reason_depth20_k5/scalar_plus_accessories/query_rankings.jsonl"
+}

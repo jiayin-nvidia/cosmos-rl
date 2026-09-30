@@ -42,6 +42,55 @@ from transformers.utils import ModelOutput
 from dataclasses import dataclass
 
 
+def cast_frozen_model_state_for_trainable_fp32_master(
+    model: torch.nn.Module,
+    frozen_dtype: torch.dtype,
+) -> dict[str, int]:
+    """Keep trainable master weights FP32 while storing frozen state compactly.
+
+    Cosmos normally constructs every parameter in ``master_dtype``.  That is
+    desirable for optimizer-owned trainable parameters, but unnecessarily
+    expensive for a frozen multi-billion-parameter base model.  Applying this
+    after all trainability rules have run gives LoRA (and modules_to_save)
+    FP32 optimizer weights while frozen base weights remain BF16/FP16.  FSDP's
+    mixed-precision policy still controls the forward/backward compute dtype.
+
+    The function is intentionally safe on meta tensors so it can run before
+    FSDP wrapping and checkpoint materialization.
+    """
+    if frozen_dtype not in (torch.bfloat16, torch.float16):
+        raise ValueError(
+            "frozen_dtype must be bfloat16 or float16 for trainable-FP32-master mode"
+        )
+
+    stats = {
+        "trainable_fp32_parameters": 0,
+        "frozen_cast_parameters": 0,
+        "frozen_cast_buffers": 0,
+    }
+    for parameter in model.parameters():
+        if not parameter.is_floating_point():
+            continue
+        if parameter.requires_grad:
+            if parameter.dtype != torch.float32:
+                raise ValueError(
+                    "trainable-FP32-master mode requires every trainable parameter "
+                    f"to start in float32, found {parameter.dtype}"
+                )
+            stats["trainable_fp32_parameters"] += parameter.numel()
+        else:
+            if parameter.dtype != frozen_dtype:
+                parameter.data = parameter.data.to(dtype=frozen_dtype)
+            stats["frozen_cast_parameters"] += parameter.numel()
+
+    for buffer in model.buffers():
+        if buffer.is_floating_point():
+            if buffer.dtype != frozen_dtype:
+                buffer.data = buffer.data.to(dtype=frozen_dtype)
+            stats["frozen_cast_buffers"] += buffer.numel()
+    return stats
+
+
 @dataclass
 class CosmosModelOutput(ModelOutput):
     """
@@ -673,6 +722,30 @@ class ModelRegistry:
             freeze_pattern = config.policy.freeze_pattern
             if freeze_pattern is not None:
                 model.apply_freeze_pattern(freeze_pattern)
+
+            # With low LoRA learning rates, a BF16 optimizer/master parameter
+            # can round an AdamW update to zero.  This opt-in mode keeps only
+            # optimizer-owned trainable parameters in FP32 and casts the
+            # frozen base back to the configured compute/storage dtype.  It
+            # must run after every LoRA/trainable/freeze rule above.
+            if config.custom.get("fp32_trainable_master_only", False):
+                if config.train.master_dtype != "float32":
+                    raise ValueError(
+                        "fp32_trainable_master_only requires train.master_dtype='float32'"
+                    )
+                frozen_dtype = util.str2torch_dtype(config.train.param_dtype)
+                precision_stats = cast_frozen_model_state_for_trainable_fp32_master(
+                    model, frozen_dtype
+                )
+                logger.info(
+                    "Mixed optimizer storage enabled: trainable master parameters "
+                    "remain FP32 (%s elements); frozen parameters use %s (%s elements; "
+                    "%s floating buffer elements)",
+                    precision_stats["trainable_fp32_parameters"],
+                    frozen_dtype,
+                    precision_stats["frozen_cast_parameters"],
+                    precision_stats["frozen_cast_buffers"],
+                )
 
             return model
 

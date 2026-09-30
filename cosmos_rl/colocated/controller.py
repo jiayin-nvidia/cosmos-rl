@@ -358,6 +358,7 @@ class ColocatedController(Controller):
                 self.current_step % self.config.train.ckpt.save_freq == 0
                 and self.current_step > 0
             )
+        do_save = do_save or self.current_step in self.config.train.ckpt.save_steps
 
         if hasattr(self, "init_data_fetch_command"):
             data_fetch_cmd = self.init_data_fetch_command

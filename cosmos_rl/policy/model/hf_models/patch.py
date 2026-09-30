@@ -17,6 +17,7 @@ import importlib
 import threading
 
 import torch
+import torch.nn.functional as F
 import transformers
 from typing import Any, Optional
 from transformers import AutoConfig
@@ -570,6 +571,87 @@ def visual_forward_qwen3_vl_patch(model):
     model_module = importlib.import_module(type(model).__module__)
     Qwen3VLModelOutputWithPast = getattr(model_module, "Qwen3VLModelOutputWithPast")
 
+    # Keep the block-prefix fast path inside ``self.visual(...)`` instead of
+    # executing the tail directly from Qwen3VLModel.forward.  This is
+    # important under FSDP2: calling the visual module runs its pre/post
+    # forward hooks, which unshard the deep-stack mergers owned by the visual
+    # root and install the matching backward hooks.  Bypassing the module call
+    # leaves those parameters as DTensors and mixes them with local cached
+    # activations.
+    original_visual_forward = model.visual.forward
+
+    def visual_forward_with_pas_prefix(
+        self,
+        hidden_states: torch.Tensor,
+        grid_thw: torch.Tensor,
+        **kwargs,
+    ):
+        cached_deepstack_features = kwargs.pop(
+            "_pas_cached_deepstack_features", None
+        )
+        prefix_start_block = kwargs.pop("_pas_prefix_start_block", None)
+        if cached_deepstack_features is None:
+            return original_visual_forward(hidden_states, grid_thw, **kwargs)
+        if prefix_start_block is None:
+            # Backward compatibility for the original block-24 cache.
+            prefix_start_block = len(self.blocks) - 3
+        prefix_start_block = int(prefix_start_block)
+        if not 0 <= prefix_start_block < len(self.blocks):
+            raise ValueError(
+                f"PAS visual prefix block must be in [0, {len(self.blocks)}), "
+                f"got {prefix_start_block}"
+            )
+        if self.deepstack_visual_indexes != [8, 16, 24]:
+            raise ValueError(
+                "PAS visual prefix cache requires deepstack indexes [8, 16, 24], "
+                f"got {self.deepstack_visual_indexes}"
+            )
+
+        rotary_pos_emb = self.rot_pos_emb(grid_thw)
+        seq_len = hidden_states.shape[0]
+        rotary_pos_emb = rotary_pos_emb.reshape(seq_len, -1)
+        emb = torch.cat((rotary_pos_emb, rotary_pos_emb), dim=-1)
+        position_embeddings = (emb.cos(), emb.sin())
+        cu_seqlens = torch.repeat_interleave(
+            grid_thw[:, 1] * grid_thw[:, 2], grid_thw[:, 0]
+        ).cumsum(
+            dim=0,
+            dtype=grid_thw.dtype if torch.jit.is_tracing() else torch.int32,
+        )
+        cu_seqlens = F.pad(cu_seqlens, (1, 0), value=0)
+
+        new_deepstack = []
+        for layer_num in range(prefix_start_block, len(self.blocks)):
+            hidden_states = self.blocks[layer_num](
+                hidden_states,
+                cu_seqlens=cu_seqlens,
+                position_embeddings=position_embeddings,
+                **kwargs,
+            )
+            if layer_num in self.deepstack_visual_indexes:
+                merger_index = self.deepstack_visual_indexes.index(layer_num)
+                new_deepstack.append(
+                    self.deepstack_merger_list[merger_index](hidden_states)
+                )
+        cached_count = cached_deepstack_features.shape[1]
+        if cached_count + len(new_deepstack) != len(self.deepstack_visual_indexes):
+            raise ValueError(
+                "PAS visual prefix cache deep-stack count mismatch: "
+                f"cached={cached_count}, recomputed={len(new_deepstack)}, "
+                f"expected={len(self.deepstack_visual_indexes)}"
+            )
+
+        final_embeds = self.merger(hidden_states)
+        deepstack_features = [
+            cached_deepstack_features[:, index]
+            for index in range(cached_count)
+        ] + new_deepstack
+        return final_embeds, deepstack_features
+
+    model.visual.forward = visual_forward_with_pas_prefix.__get__(
+        model.visual, type(model.visual)
+    )
+
     # Replaces Qwen3VLModel.forward from:
     #   transformers.models.qwen3_vl.modeling_qwen3_vl  (transformers v4.57.6)
     def visual_forward_qwen3_vl_inner(
@@ -601,8 +683,35 @@ def visual_forward_qwen3_vl_patch(model):
         deepstack_image_embeds = None
         skip_visual = False
 
+        cached_visual_prefix = (
+            pixel_values is not None
+            and pixel_values_videos is not None
+            and pixel_values.ndim == 2
+            and pixel_values.shape[-1] == self.visual.config.hidden_size
+            and pixel_values_videos.ndim == 3
+            and 0 <= pixel_values_videos.shape[1]
+            <= len(self.visual.deepstack_visual_indexes)
+            and pixel_values_videos.shape[-1]
+            == self.visual.config.out_hidden_size
+        )
+
         # ---- merged visual forward (follows NemotronVL: modeling_nemotron_vl_h.py:2135-2152) ----
-        if pixel_values is None and pixel_values_videos is None:
+        if cached_visual_prefix:
+            # PAS late-vision training path. ``pixel_values`` contains the
+            # frozen output after block 23, while ``pixel_values_videos`` is a
+            # carrier for the already-merged deep-stack outputs from blocks 8
+            # and 16. Blocks 24-26 and the visual merger still execute with a
+            # normal autograd graph, so their LoRA weights remain trainable.
+            if video_grid_thw is None or video_grid_thw.numel() != 1:
+                # Legacy caches did not carry an explicit prefix block.
+                pas_prefix_start_block = len(self.visual.blocks) - 3
+            else:
+                pas_prefix_start_block = int(video_grid_thw.item())
+            final_pixel_value = None
+            final_thw = image_grid_thw
+            num_image = image_grid_thw.shape[0]
+            video_grid_thw = None
+        elif pixel_values is None and pixel_values_videos is None:
             skip_visual = True
         elif pixel_values is None:
             final_pixel_value = pixel_values_videos
@@ -617,7 +726,31 @@ def visual_forward_qwen3_vl_patch(model):
             final_thw = torch.cat([image_grid_thw, video_grid_thw], dim=0)
             num_image = image_grid_thw.shape[0]
 
-        if not skip_visual:
+        if cached_visual_prefix:
+            grid_thw = image_grid_thw
+            final_embeds, deepstack_image_embeds = self.visual(
+                pixel_values,
+                grid_thw=grid_thw,
+                _pas_cached_deepstack_features=pixel_values_videos,
+                _pas_prefix_start_block=pas_prefix_start_block,
+                **kwargs,
+            )
+            merge_size = self.visual.config.spatial_merge_size
+            token_counts = (
+                grid_thw.prod(dim=-1) // (merge_size * merge_size)
+            ).tolist()
+            image_embeds = list(
+                final_embeds.split([int(value) for value in token_counts], dim=0)
+            )
+            # Keep the differentiable, post-merger image representation alive
+            # until the custom PAS loss callback runs.  The callback clears
+            # these attributes immediately after consuming them.  This makes
+            # it possible to add an image-attribute auxiliary objective to the
+            # same forward pass without recomputing the vision tower.
+            self._pas_last_visual_embeds = final_embeds
+            self._pas_last_visual_grid_thw = grid_thw
+            video_embeds = []
+        elif not skip_visual:
             # Qwen3VLModel.get_image_features: ViT → merger → torch.split per image/video
             # Returns (tuple_of_per_item_embeds, list_of_deepstack_layer_tensors)
             all_embeds, deepstack_image_embeds = self.get_image_features(

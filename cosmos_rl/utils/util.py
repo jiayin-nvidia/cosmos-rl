@@ -61,6 +61,12 @@ import numpy as np
 from torch.utils.data import Dataset
 
 
+def _fused_ce_lora_lm_head_identity_forward(module, hidden_states):
+    """Return hidden states while retaining a LoRA LM head for custom projection losses."""
+    del module
+    return hidden_states
+
+
 def create_cached_dir_if_needed():
     """
     Creates the local cached dir if it doesn't exist.
@@ -1264,15 +1270,43 @@ def replace_with_liger_equivalents(root: torch.nn.Module, config: CosmosConfig) 
                     config.policy.enable_liger_cross_entropy = True
                     config.policy.enable_liger_fused_cross_entropy = False
                 else:
-                    logger.info(
-                        "Replace lm_head with Identity layer for fused_cross_entropy"
+                    preserve_lora_head = bool(
+                        config.custom.get(
+                            "preserve_lora_lm_head_for_selected_projection", False
+                        )
                     )
-                    # If fused CE enabled, replace lm_head with IndentityLayer and keep its weight
-                    new_lm_head = IdentityLayer()
-                    new_lm_head.register_parameter("weight", child.weight)
-                    if hasattr(child, "bias") and child.bias is not None:
-                        new_lm_head.register_parameter("bias", child.bias)
-                    replace_child(name, child, new_lm_head, root)
+                    if preserve_lora_head:
+                        from cosmos_rl.policy.lora.plugin import LoraInjectedLinear
+
+                        if not isinstance(child, LoraInjectedLinear):
+                            raise ValueError(
+                                "preserve_lora_lm_head_for_selected_projection "
+                                "requires lm_head to be a LoraInjectedLinear"
+                            )
+                        # Fused CE needs final hidden states, while the custom PAS
+                        # loss consumes just the selected yes/no rows (including
+                        # their LoRA update). Keep the module and its parameters so
+                        # optimizer/export state remains complete, but bypass the
+                        # full-vocabulary projection in the model forward.
+                        child.forward = (
+                            _fused_ce_lora_lm_head_identity_forward.__get__(
+                                child, type(child)
+                            )
+                        )
+                        logger.info(
+                            "Bypass full-vocabulary lm_head projection while "
+                            "preserving trainable LoRA parameters"
+                        )
+                    else:
+                        logger.info(
+                            "Replace lm_head with Identity layer for fused_cross_entropy"
+                        )
+                        # If fused CE enabled, replace lm_head with IndentityLayer and keep its weight
+                        new_lm_head = IdentityLayer()
+                        new_lm_head.register_parameter("weight", child.weight)
+                        if hasattr(child, "bias") and child.bias is not None:
+                            new_lm_head.register_parameter("bias", child.bias)
+                        replace_child(name, child, new_lm_head, root)
 
 
 # Custom tokenizer-loader registry.  Each entry is a (predicate, loader)

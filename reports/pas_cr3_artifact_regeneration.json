@@ -1,0 +1,25 @@
+{
+  "date_utc": "2026-09-30",
+  "methods": {
+    "embedding_comparison": "cmp -s on the merged gallery .npy and each of 16 text .npy shards",
+    "cache_comparison": "JSON equality of entries in all 16 manifest files; matching safetensors filename sets and cmp -s of every matching shard"
+  },
+  "siglip2_step03906_embeddings": {
+    "gallery": "byte_identical",
+    "balanced_750000_query_text_shards": {"identical": 8, "total": 8},
+    "remaining_1131764_query_text_shards": {"identical": 8, "total": 8},
+    "generated_root": "reproduction/regenerated_embeddings",
+    "source_text_root": "/workspace/jiayin/rerank_experiment/artifacts/pas_v31_step03906_embeddings",
+    "source_gallery": "/workspace/jiayin/rerank_experiment/artifacts/pas_v31_step03906_embeddings/train_selected43520/image_embeddings.npy"
+  },
+  "cr3_block24_visual_cache": {
+    "manifest_entry_mappings": {"identical": 222217, "total": 222217},
+    "primary_tensor_shards": {"byte_identical": 6808, "total": 6808, "bytes": 161167513424},
+    "supplement_tensor_shards": {"byte_identical": 144, "total": 144, "bytes": 2344040032},
+    "generated_root": "reproduction/cache",
+    "source_root": "/workspace/jiayin/cache/pas_cr3_block24_prefix",
+    "metadata_note": "Manifest entry mappings match exactly. The regenerated build-time statistics and feature-layout alias differ; the cache loader canonicalizes both aliases.",
+    "loader_check": "VisualCacheReader loaded a regenerated rank-00 entry, normalized the feature layout, and returned prefix/deepstack tensors and grid exactly equal to the original cache."
+  },
+  "training_config_check": "Both regenerated-data TOMLs parsed and all 20 annotation, attribute-record, and cache-manifest input paths in each existed."
+}

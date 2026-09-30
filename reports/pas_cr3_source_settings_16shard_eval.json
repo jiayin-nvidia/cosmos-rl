@@ -1,0 +1,105 @@
+{
+  "date_utc": "2026-09-30",
+  "test_queries": 69633,
+  "execution": "Two workers of eight A100 GPUs for each mode; 16 query shards",
+  "source_setting_changes_from_first_fresh_run": {
+    "max_model_len": 32768,
+    "score_chunk": 256
+  },
+  "public_cr3": {
+    "query_count": 69633,
+    "by_difficulty": {
+      "easy": {
+        "mAP": 0.3780470847767778,
+        "Rank-1": 0.4598467778278504,
+        "Rank-5": 0.6909418657052726
+      },
+      "medium": {
+        "mAP": 0.512475248293359,
+        "Rank-1": 0.5166178530497899,
+        "Rank-5": 0.6614457319920201
+      },
+      "hard": {
+        "mAP": 0.6661947734319015,
+        "Rank-1": 0.6448668564729526,
+        "Rank-5": 0.7601741751800368
+      }
+    },
+    "overall": {
+      "mAP": 0.5223624596726764,
+      "Rank-1": 0.5425157612051758,
+      "Rank-5": 0.7047089741932704
+    },
+    "trace": "reproduction/full_test_source_settings/public_cr3/scalar_plus_accessories_full_dedup_cosmos_reason_depth20_k5/scalar_plus_accessories/query_rankings.jsonl",
+    "saved_trace_comparison": {
+      "different_retriever_head_queries": 2,
+      "different_candidate_set_queries": 1,
+      "different_rerank_order_queries": 64480,
+      "different_rank1_queries": 1216,
+      "different_rank5_queries": 109,
+      "mean_abs_candidate_score_delta": 0.05246426712756371
+    }
+  },
+  "finetuned_siglip2_zero_shot_cr3": {
+    "query_count": 69633,
+    "by_difficulty": {
+      "easy": {
+        "mAP": 0.5304600161619697,
+        "Rank-1": 0.5178008111762055,
+        "Rank-5": 0.8841820639927895
+      },
+      "medium": {
+        "mAP": 0.6911163336743102,
+        "Rank-1": 0.6298654442039135,
+        "Rank-5": 0.9224075724776094
+      },
+      "hard": {
+        "mAP": 0.8163387750040998,
+        "Rank-1": 0.7534751297940043,
+        "Rank-5": 0.9667559872718138
+      }
+    },
+    "overall": {
+      "mAP": 0.6828709486287406,
+      "Rank-1": 0.6365516350006463,
+      "Rank-5": 0.9254376516881364
+    },
+    "trace": "reproduction/full_test_source_settings/finetuned_zeroshot/scalar_plus_accessories_full_dedup_cosmos_reason_depth20_k5/scalar_plus_accessories/query_rankings.jsonl",
+    "saved_trace_comparison": {
+      "different_retriever_head_queries": 4,
+      "different_candidate_set_queries": 1,
+      "different_rerank_order_queries": 63758,
+      "different_rank1_queries": 2178,
+      "different_rank5_queries": 423,
+      "mean_abs_candidate_score_delta": 0.05118406109440916
+    }
+  },
+  "zero_shot_test_selected_fusion": {
+    "alpha": 0.9930399999999976,
+    "overall": {
+      "mAP": 0.7993645523012308,
+      "Rank-1": 0.8163801645771401,
+      "Rank-5": 0.9732885269915127
+    },
+    "summary": "reproduction/full_test_source_settings/finetuned_zeroshot_fusion/summary.json",
+    "caveat": "Test-selected alpha is diagnostic, not validation-selected."
+  },
+  "reference_overall_percent": {
+    "public_cr3": [
+      52.22,
+      54.21,
+      70.46
+    ],
+    "zero_shot_cr3": [
+      68.29,
+      63.62,
+      92.57
+    ],
+    "zero_shot_best_fusion": [
+      79.94,
+      81.65,
+      97.31
+    ]
+  },
+  "table_check": "reports/pas_cr3_source_settings_16shard_check.txt"
+}

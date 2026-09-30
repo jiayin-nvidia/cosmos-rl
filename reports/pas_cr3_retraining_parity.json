@@ -1,0 +1,440 @@
+{
+  "scope": "Independent CR3 Nano re-fine-tuning checkpoint and loss parity through step 8000; completed full-test and Val999 metrics in pas_cr3_independent_step8000_eval.json",
+  "source_stage0_metrics": "/workspace/jiayin/cosmos-rl/outputs/pas_cr3_fresh_rank32_k20_all_structured_attribute/20260816083308/loss_metrics.jsonl",
+  "source_stage1_metrics": "/workspace/jiayin/cosmos-rl/outputs/pas_cr3_fresh_rank32_k20_smallbatch_resume_step2000_lepton/20260816190243/loss_metrics.jsonl",
+  "runs": {
+    "8_gpu": {
+      "data_parallel_ranks": 8,
+      "candidates_per_rank": 80,
+      "global_batch": 640,
+      "stage0": {
+        "checkpoints": {
+          "500": {
+            "language": {
+              "tensor_count": 504,
+              "relative_l2": 0.013534603838928683,
+              "cosine": 0.9999084126646223
+            },
+            "visual": {
+              "tensor_count": 28,
+              "relative_l2": 0.0025408844221274413,
+              "cosine": 0.9999967719520461
+            }
+          },
+          "1000": {
+            "language": {
+              "tensor_count": 504,
+              "relative_l2": 0.02457522307090345,
+              "cosine": 0.9996981140435856
+            },
+            "visual": {
+              "tensor_count": 28,
+              "relative_l2": 0.0043494138071154655,
+              "cosine": 0.9999905413161733
+            }
+          },
+          "1500": {
+            "language": {
+              "tensor_count": 504,
+              "relative_l2": 0.030643876071878788,
+              "cosine": 0.999530670625248
+            },
+            "visual": {
+              "tensor_count": 28,
+              "relative_l2": 0.005475917680922395,
+              "cosine": 0.9999850074240177
+            }
+          },
+          "2000": {
+            "language": {
+              "tensor_count": 504,
+              "relative_l2": 0.03490475133463628,
+              "cosine": 0.9993909938068766
+            },
+            "visual": {
+              "tensor_count": 28,
+              "relative_l2": 0.006407515910053588,
+              "cosine": 0.9999794732667245
+            }
+          }
+        },
+        "loss_windows": {
+          "1-500": {
+            "steps": 500,
+            "mean_absolute_loss_difference": 0.006079986333847046
+          },
+          "501-1000": {
+            "steps": 500,
+            "mean_absolute_loss_difference": 0.007973631262779236
+          },
+          "1001-1500": {
+            "steps": 500,
+            "mean_absolute_loss_difference": 0.008455717921257018
+          },
+          "1501-2000": {
+            "steps": 500,
+            "mean_absolute_loss_difference": 0.009217992424964905
+          }
+        }
+      },
+      "stage1": {
+        "checkpoints": {},
+        "loss_windows": {}
+      }
+    },
+    "16_gpu": {
+      "data_parallel_ranks": 16,
+      "candidates_per_rank": 40,
+      "global_batch": 640,
+      "stage0": {
+        "checkpoints": {
+          "500": {
+            "language": {
+              "tensor_count": 504,
+              "relative_l2": 0.014345607780584285,
+              "cosine": 0.9998971000009498
+            },
+            "visual": {
+              "tensor_count": 28,
+              "relative_l2": 0.002660669138425889,
+              "cosine": 0.9999964605148369
+            }
+          },
+          "1000": {
+            "language": {
+              "tensor_count": 504,
+              "relative_l2": 0.023826827974312816,
+              "cosine": 0.9997161382837425
+            },
+            "visual": {
+              "tensor_count": 28,
+              "relative_l2": 0.0043965394338116555,
+              "cosine": 0.9999903368116786
+            }
+          },
+          "1500": {
+            "language": {
+              "tensor_count": 504,
+              "relative_l2": 0.029648424233797967,
+              "cosine": 0.9995605010746519
+            },
+            "visual": {
+              "tensor_count": 28,
+              "relative_l2": 0.005473329476469101,
+              "cosine": 0.9999850214781087
+            }
+          },
+          "2000": {
+            "language": {
+              "tensor_count": 504,
+              "relative_l2": 0.035649262108737326,
+              "cosine": 0.9993646146127002
+            },
+            "visual": {
+              "tensor_count": 28,
+              "relative_l2": 0.0064140277701782294,
+              "cosine": 0.9999794302208598
+            }
+          }
+        },
+        "loss_windows": {
+          "1-500": {
+            "steps": 500,
+            "mean_absolute_loss_difference": 0.006154811143875122
+          },
+          "501-1000": {
+            "steps": 500,
+            "mean_absolute_loss_difference": 0.00794698715209961
+          },
+          "1001-1500": {
+            "steps": 500,
+            "mean_absolute_loss_difference": 0.008386342644691467
+          },
+          "1501-2000": {
+            "steps": 500,
+            "mean_absolute_loss_difference": 0.0089251708984375
+          }
+        }
+      },
+      "stage1": {
+        "checkpoints": {
+          "2500": {
+            "language": {
+              "tensor_count": 504,
+              "relative_l2": 0.04093937562927062,
+              "cosine": 0.9991620492884599
+            },
+            "visual": {
+              "tensor_count": 28,
+              "relative_l2": 0.0072041270044753076,
+              "cosine": 0.999974052658721
+            }
+          },
+          "4000": {
+            "language": {
+              "tensor_count": 504,
+              "relative_l2": 0.055680860284661605,
+              "cosine": 0.9984498436551644
+            },
+            "visual": {
+              "tensor_count": 28,
+              "relative_l2": 0.009694455783379597,
+              "cosine": 0.9999530078152657
+            }
+          }
+        },
+        "loss_windows": {
+          "2001-2500": {
+            "steps": 500,
+            "mean_absolute_loss_difference": 0.009697846293449401
+          },
+          "3501-4000": {
+            "steps": 500,
+            "mean_absolute_loss_difference": 0.011682770013809204
+          }
+        }
+      }
+    },
+    "32_gpu": {
+      "data_parallel_ranks": 32,
+      "candidates_per_rank": 20,
+      "global_batch": 640,
+      "stage0": {
+        "checkpoints": {
+          "500": {
+            "language": {
+              "tensor_count": 504,
+              "relative_l2": 0.013990402802182885,
+              "cosine": 0.9999021342492961
+            },
+            "visual": {
+              "tensor_count": 28,
+              "relative_l2": 0.0025683857396809353,
+              "cosine": 0.9999967018811952
+            }
+          },
+          "1000": {
+            "language": {
+              "tensor_count": 504,
+              "relative_l2": 0.02376185604746372,
+              "cosine": 0.999717717253674
+            },
+            "visual": {
+              "tensor_count": 28,
+              "relative_l2": 0.004200773463417154,
+              "cosine": 0.999991177246567
+            }
+          },
+          "1500": {
+            "language": {
+              "tensor_count": 504,
+              "relative_l2": 0.0295940776576303,
+              "cosine": 0.9995621612931631
+            },
+            "visual": {
+              "tensor_count": 28,
+              "relative_l2": 0.005175012987189717,
+              "cosine": 0.9999866097203108
+            }
+          },
+          "2000": {
+            "language": {
+              "tensor_count": 504,
+              "relative_l2": 0.03538918446460212,
+              "cosine": 0.999373912769487
+            },
+            "visual": {
+              "tensor_count": 28,
+              "relative_l2": 0.005985139747517094,
+              "cosine": 0.9999820890312152
+            }
+          }
+        },
+        "loss_windows": {
+          "1-500": {
+            "steps": 500,
+            "mean_absolute_loss_difference": 0.005895677924156189
+          },
+          "501-1000": {
+            "steps": 500,
+            "mean_absolute_loss_difference": 0.007786250710487366
+          },
+          "1001-1500": {
+            "steps": 500,
+            "mean_absolute_loss_difference": 0.00807728636264801
+          },
+          "1501-2000": {
+            "steps": 500,
+            "mean_absolute_loss_difference": 0.008554802060127258
+          }
+        }
+      },
+      "stage1": {
+        "checkpoints": {
+          "2500": {
+            "language": {
+              "tensor_count": 504,
+              "relative_l2": 0.04071046633796961,
+              "cosine": 0.9991714221399447
+            },
+            "visual": {
+              "tensor_count": 28,
+              "relative_l2": 0.006693731244890945,
+              "cosine": 0.9999775972446499
+            }
+          },
+          "3000": {
+            "language": {
+              "tensor_count": 504,
+              "relative_l2": 0.04480656686386908,
+              "cosine": 0.9989963475305965
+            },
+            "visual": {
+              "tensor_count": 28,
+              "relative_l2": 0.007467164738942864,
+              "cosine": 0.9999721213841671
+            }
+          },
+          "4000": {
+            "language": {
+              "tensor_count": 504,
+              "relative_l2": 0.0539933424960841,
+              "cosine": 0.9985423234773103
+            },
+            "visual": {
+              "tensor_count": 28,
+              "relative_l2": 0.009205863693737932,
+              "cosine": 0.9999576251473434
+            }
+          },
+          "5000": {
+            "language": {
+              "tensor_count": 504,
+              "relative_l2": 0.06253703454691655,
+              "cosine": 0.9980447928811439
+            },
+            "visual": {
+              "tensor_count": 28,
+              "relative_l2": 0.0107768884069808,
+              "cosine": 0.9999419280947408
+            }
+          },
+          "5500": {
+            "language": {
+              "tensor_count": 504,
+              "relative_l2": 0.07024258744176134,
+              "cosine": 0.99753345545201
+            },
+            "visual": {
+              "tensor_count": 28,
+              "relative_l2": 0.011700799995836168,
+              "cosine": 0.9999315434780467
+            }
+          },
+          "6000": {
+            "language": {
+              "tensor_count": 504,
+              "relative_l2": 0.07644029175006282,
+              "cosine": 0.9970792050010766
+            },
+            "visual": {
+              "tensor_count": 28,
+              "relative_l2": 0.012672810557826045,
+              "cosine": 0.9999196998674214
+            }
+          },
+          "6500": {
+            "language": {
+              "tensor_count": 504,
+              "relative_l2": 0.08442849490655324,
+              "cosine": 0.9964370854687077
+            },
+            "visual": {
+              "tensor_count": 28,
+              "relative_l2": 0.013665267395809026,
+              "cosine": 0.9999066315390046
+            }
+          },
+          "7000": {
+            "language": {
+              "tensor_count": 504,
+              "relative_l2": 0.0922825741834276,
+              "cosine": 0.9957436692898414
+            },
+            "visual": {
+              "tensor_count": 28,
+              "relative_l2": 0.014795924428231157,
+              "cosine": 0.9998905357963429
+            }
+          },
+          "7500": {
+            "language": {
+              "tensor_count": 504,
+              "relative_l2": 0.10036376485070489,
+              "cosine": 0.9949657559247739
+            },
+            "visual": {
+              "tensor_count": 28,
+              "relative_l2": 0.01588519671736509,
+              "cosine": 0.9998738258105931
+            }
+          },
+          "8000": {
+            "language": {
+              "tensor_count": 504,
+              "relative_l2": 0.11110758218645028,
+              "cosine": 0.9938317023633872
+            },
+            "visual": {
+              "tensor_count": 28,
+              "relative_l2": 0.017104213927129783,
+              "cosine": 0.9998537178321707
+            }
+          }
+        },
+        "loss_windows": {
+          "2001-2500": {
+            "steps": 500,
+            "mean_absolute_loss_difference": 0.00876190173625946
+          },
+          "2501-3000": {
+            "steps": 500,
+            "mean_absolute_loss_difference": 0.010366588950157166
+          },
+          "3501-4000": {
+            "steps": 500,
+            "mean_absolute_loss_difference": 0.011477244377136231
+          },
+          "4501-5000": {
+            "steps": 500,
+            "mean_absolute_loss_difference": 0.012133813619613647
+          },
+          "5001-5500": {
+            "steps": 500,
+            "mean_absolute_loss_difference": 0.01359485900402069
+          },
+          "5501-6000": {
+            "steps": 500,
+            "mean_absolute_loss_difference": 0.013745052218437194
+          },
+          "6001-6500": {
+            "steps": 500,
+            "mean_absolute_loss_difference": 0.016052780508995057
+          },
+          "6501-7000": {
+            "steps": 500,
+            "mean_absolute_loss_difference": 0.01638914108276367
+          },
+          "7001-7500": {
+            "steps": 500,
+            "mean_absolute_loss_difference": 0.019307593941688538
+          },
+          "7501-8000": {
+            "steps": 500,
+            "mean_absolute_loss_difference": 0.020099985241889953
+          }
+        }
+      }
+    }
+  }
+}

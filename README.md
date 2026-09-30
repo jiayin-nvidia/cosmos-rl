@@ -18,6 +18,12 @@
 </p>
 
 
+## PAS V3.1 CR3 Nano reranker
+
+The [reproduction guide](examples/pas_reranker/README.md) includes the baseline
+reranker, fine-tuned step-8000 checkpoint, data mining and visual cache recipe,
+training configurations, and evaluation results.
+
 ## Getting Started
 
 Cosmos-RL is a flexible and scalable Reinforcement Learning framework specialized for Physical AI applications.

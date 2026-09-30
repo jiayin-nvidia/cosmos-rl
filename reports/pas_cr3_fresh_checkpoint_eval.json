@@ -1,0 +1,159 @@
+{
+  "contract": "69,633 deduplicated scalar_plus_accessories PAS V3.1 test queries; SigLIP2 top 20; full-gallery AP/Rank-1/Rank-5",
+  "checkpoint": "checkpoints/cr3_nano_step8000",
+  "fresh_query_count": 69633,
+  "validation_alpha": 0.3178799999999988,
+  "metrics": {
+    "reranker": {
+      "easy": {
+        "mAP": {
+          "table_percent": 67.83,
+          "fresh_percent": 67.835616,
+          "fresh_minus_table_percentage_points": 0.005616
+        },
+        "Rank-1": {
+          "table_percent": 72.84,
+          "fresh_percent": 72.825597,
+          "fresh_minus_table_percentage_points": -0.014403
+        },
+        "Rank-5": {
+          "table_percent": 95.33,
+          "fresh_percent": 95.33123,
+          "fresh_minus_table_percentage_points": 0.00123
+        }
+      },
+      "medium": {
+        "mAP": {
+          "table_percent": 81.48,
+          "fresh_percent": 81.477466,
+          "fresh_minus_table_percentage_points": -0.002534
+        },
+        "Rank-1": {
+          "table_percent": 80.43,
+          "fresh_percent": 80.432107,
+          "fresh_minus_table_percentage_points": 0.002107
+        },
+        "Rank-5": {
+          "table_percent": 97.12,
+          "fresh_percent": 97.11363,
+          "fresh_minus_table_percentage_points": -0.00637
+        }
+      },
+      "hard": {
+        "mAP": {
+          "table_percent": 91.67,
+          "fresh_percent": 91.662032,
+          "fresh_minus_table_percentage_points": -0.007968
+        },
+        "Rank-1": {
+          "table_percent": 90.16,
+          "fresh_percent": 90.127282,
+          "fresh_minus_table_percentage_points": -0.032718
+        },
+        "Rank-5": {
+          "table_percent": 99.27,
+          "fresh_percent": 99.267292,
+          "fresh_minus_table_percentage_points": -0.002708
+        }
+      },
+      "overall": {
+        "mAP": {
+          "table_percent": 80.63,
+          "fresh_percent": 80.623496,
+          "fresh_minus_table_percentage_points": -0.006504
+        },
+        "Rank-1": {
+          "table_percent": 81.35,
+          "fresh_percent": 81.333563,
+          "fresh_minus_table_percentage_points": -0.016437
+        },
+        "Rank-5": {
+          "table_percent": 97.29,
+          "fresh_percent": 97.284334,
+          "fresh_minus_table_percentage_points": -0.005666
+        }
+      }
+    },
+    "fusion": {
+      "easy": {
+        "mAP": {
+          "table_percent": 71.2,
+          "fresh_percent": 71.212689,
+          "fresh_minus_table_percentage_points": 0.012689
+        },
+        "Rank-1": {
+          "table_percent": 77.75,
+          "fresh_percent": 77.742226,
+          "fresh_minus_table_percentage_points": -0.007774
+        },
+        "Rank-5": {
+          "table_percent": 96.66,
+          "fresh_percent": 96.660658,
+          "fresh_minus_table_percentage_points": 0.000658
+        }
+      },
+      "medium": {
+        "mAP": {
+          "table_percent": 84.0,
+          "fresh_percent": 83.988603,
+          "fresh_minus_table_percentage_points": -0.011397
+        },
+        "Rank-1": {
+          "table_percent": 84.52,
+          "fresh_percent": 84.498493,
+          "fresh_minus_table_percentage_points": -0.021507
+        },
+        "Rank-5": {
+          "table_percent": 98.03,
+          "fresh_percent": 98.026232,
+          "fresh_minus_table_percentage_points": -0.003768
+        }
+      },
+      "hard": {
+        "mAP": {
+          "table_percent": 92.94,
+          "fresh_percent": 92.939665,
+          "fresh_minus_table_percentage_points": -0.000335
+        },
+        "Rank-1": {
+          "table_percent": 92.47,
+          "fresh_percent": 92.459387,
+          "fresh_minus_table_percentage_points": -0.010613
+        },
+        "Rank-5": {
+          "table_percent": 99.56,
+          "fresh_percent": 99.564562,
+          "fresh_minus_table_percentage_points": 0.004562
+        }
+      },
+      "overall": {
+        "mAP": {
+          "table_percent": 82.99,
+          "fresh_percent": 82.987492,
+          "fresh_minus_table_percentage_points": -0.002508
+        },
+        "Rank-1": {
+          "table_percent": 85.09,
+          "fresh_percent": 85.076042,
+          "fresh_minus_table_percentage_points": -0.013958
+        },
+        "Rank-5": {
+          "table_percent": 98.12,
+          "fresh_percent": 98.118708,
+          "fresh_minus_table_percentage_points": -0.001292
+        }
+      }
+    }
+  },
+  "fresh_vs_saved_trace": {
+    "queries": 69633,
+    "candidates": 1392660,
+    "different_rerank_order": 17422,
+    "different_rank1": 108,
+    "different_rank5": 13,
+    "exact_candidate_scores": 72929,
+    "mean_abs_candidate_score_delta": 0.007848298497107617,
+    "max_abs_candidate_score_delta": 0.6406245813705027,
+    "mean_new_minus_old_ap": -2.1092176590447096e-05
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "inputs": "Original row-aligned SigLIP2 text shards and 222217-image gallery, regenerated query selections, original PAS train_pairs.json",
+  "first_selection": {
+    "source_queries": 750000,
+    "regenerated_groups": 669871,
+    "source_groups": 669871,
+    "records": 13397420,
+    "identical_records": 13396931,
+    "score_only_different_records": 485,
+    "candidate_order_different_records": 4,
+    "affected_candidate_order_groups": 2,
+    "max_absolute_retriever_score_delta": 4.646182060241699e-05,
+    "candidate_order_group_ids": [
+      "query_01162666",
+      "query_01162668"
+    ]
+  },
+  "second_selection": {
+    "source_queries": 1131764,
+    "regenerated_groups": 1017346,
+    "source_groups": 1017346,
+    "records": 20346920,
+    "byte_identical_to_source": true
+  }
+}

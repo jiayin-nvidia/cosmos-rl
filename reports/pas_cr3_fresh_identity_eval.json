@@ -1,0 +1,150 @@
+{
+  "public_identity": {
+    "queries": 69633,
+    "cells": {
+      "easy": {
+        "mAP": {
+          "fresh": "25.49%",
+          "table": "25.49%",
+          "match": true
+        },
+        "Rank-1": {
+          "fresh": "27.39%",
+          "table": "27.39%",
+          "match": true
+        },
+        "Rank-5": {
+          "fresh": "52.27%",
+          "table": "52.27%",
+          "match": true
+        }
+      },
+      "medium": {
+        "mAP": {
+          "fresh": "32.45%",
+          "table": "32.45%",
+          "match": true
+        },
+        "Rank-1": {
+          "fresh": "26.73%",
+          "table": "26.73%",
+          "match": true
+        },
+        "Rank-5": {
+          "fresh": "49.71%",
+          "table": "49.71%",
+          "match": true
+        }
+      },
+      "hard": {
+        "mAP": {
+          "fresh": "44.82%",
+          "table": "44.82%",
+          "match": true
+        },
+        "Rank-1": {
+          "fresh": "35.83%",
+          "table": "35.83%",
+          "match": true
+        },
+        "Rank-5": {
+          "fresh": "60.66%",
+          "table": "60.66%",
+          "match": true
+        }
+      },
+      "overall": {
+        "mAP": {
+          "fresh": "34.47%",
+          "table": "34.47%",
+          "match": true
+        },
+        "Rank-1": {
+          "fresh": "30.06%",
+          "table": "30.06%",
+          "match": true
+        },
+        "Rank-5": {
+          "fresh": "54.28%",
+          "table": "54.28%",
+          "match": true
+        }
+      }
+    },
+    "matched_cells": 12
+  },
+  "finetuned_identity": {
+    "queries": 69633,
+    "cells": {
+      "easy": {
+        "mAP": {
+          "fresh": "65.77%",
+          "table": "65.77%",
+          "match": true
+        },
+        "Rank-1": {
+          "fresh": "71.28%",
+          "table": "71.28%",
+          "match": true
+        },
+        "Rank-5": {
+          "fresh": "94.36%",
+          "table": "94.36%",
+          "match": true
+        }
+      },
+      "medium": {
+        "mAP": {
+          "fresh": "78.71%",
+          "table": "78.71%",
+          "match": true
+        },
+        "Rank-1": {
+          "fresh": "77.93%",
+          "table": "77.93%",
+          "match": true
+        },
+        "Rank-5": {
+          "fresh": "96.20%",
+          "table": "96.20%",
+          "match": true
+        }
+      },
+      "hard": {
+        "mAP": {
+          "fresh": "88.98%",
+          "table": "88.98%",
+          "match": true
+        },
+        "Rank-1": {
+          "fresh": "87.18%",
+          "table": "87.18%",
+          "match": true
+        },
+        "Rank-5": {
+          "fresh": "98.68%",
+          "table": "98.68%",
+          "match": true
+        }
+      },
+      "overall": {
+        "mAP": {
+          "fresh": "78.11%",
+          "table": "78.11%",
+          "match": true
+        },
+        "Rank-1": {
+          "fresh": "78.98%",
+          "table": "78.98%",
+          "match": true
+        },
+        "Rank-5": {
+          "fresh": "96.46%",
+          "table": "96.46%",
+          "match": true
+        }
+      }
+    },
+    "matched_cells": 12
+  }
+}

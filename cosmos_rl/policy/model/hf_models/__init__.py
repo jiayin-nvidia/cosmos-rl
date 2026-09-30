@@ -132,7 +132,15 @@ class HFModel(BaseModel):
         super().set_gradient_checkpointing_enabled(enabled)
         # Configure gradient checkpointing if enabled
         if self._gradient_checkpointing_enabled:
-            self.model.gradient_checkpointing_enable()
+            # The re-entrant implementation drops gradients for trainable
+            # LoRA modules inside a checkpointed block when the block input is
+            # produced by a frozen prefix (for example our cached vision
+            # block-24 input).  Non-reentrant checkpointing has no such
+            # requires-grad-on-input restriction and is the PyTorch-recommended
+            # path for this mixed frozen/trainable model.
+            self.model.gradient_checkpointing_enable(
+                gradient_checkpointing_kwargs={"use_reentrant": False}
+            )
             assert self.model.is_gradient_checkpointing, (
                 "Gradient checkpointing is not enabled"
             )

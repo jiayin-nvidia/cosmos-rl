@@ -1,0 +1,90 @@
+{
+  "run": "Independent 32-GPU stage-1 checkpoint at step 4000; training target is step 8000",
+  "validation_queries": 999,
+  "test_queries": 69633,
+  "validation_selected_alpha": 0.30525999999999903,
+  "validation_fusion_mAP": 0.8530522618558395,
+  "checkpoint_comparison_to_source": {
+    "language": {
+      "tensor_count": 504,
+      "relative_l2": 0.0539933424960841,
+      "cosine": 0.9985423234773103
+    },
+    "visual": {
+      "tensor_count": 28,
+      "relative_l2": 0.009205863693737932,
+      "cosine": 0.9999576251473434
+    },
+    "loss_mae_steps_3501_4000": 0.011477244377136231
+  },
+  "overall_test": {
+    "reranking": {
+      "mAP": 0.8080835157804437,
+      "Rank-1": 0.8174716011086698,
+      "Rank-5": 0.9742076314391165,
+      "reference": {
+        "mAP": 0.8063,
+        "Rank-1": 0.8135,
+        "Rank-5": 0.9729
+      },
+      "difference_percentage_points": {
+        "mAP": 0.17835,
+        "Rank-1": 0.39716,
+        "Rank-5": 0.13076
+      }
+    },
+    "fusion": {
+      "mAP": 0.8307312228499588,
+      "Rank-1": 0.851765685809889,
+      "Rank-5": 0.981445578963997,
+      "reference": {
+        "mAP": 0.8299,
+        "Rank-1": 0.8509,
+        "Rank-5": 0.9812
+      },
+      "difference_percentage_points": {
+        "mAP": 0.08312,
+        "Rank-1": 0.08657,
+        "Rank-5": 0.02456
+      }
+    }
+  },
+  "by_difficulty": {
+    "reranking": {
+      "easy": {
+        "mAP": 0.6826320661285854,
+        "Rank-1": 0.7377647589004056,
+        "Rank-5": 0.955205047318612
+      },
+      "medium": {
+        "mAP": 0.8173441260093289,
+        "Rank-1": 0.808480835349548,
+        "Rank-5": 0.9725794813022623
+      },
+      "hard": {
+        "mAP": 0.915502580903222,
+        "Rank-1": 0.9003935689164294,
+        "Rank-5": 0.9934684307486183
+      }
+    },
+    "fusion": {
+      "easy": {
+        "mAP": 0.7126899012673305,
+        "Rank-1": 0.7779179810725552,
+        "Rank-5": 0.9666967102298333
+      },
+      "medium": {
+        "mAP": 0.8420737076245735,
+        "Rank-1": 0.84753172885097,
+        "Rank-5": 0.9807292329895156
+      },
+      "hard": {
+        "mAP": 0.929212186135563,
+        "Rank-1": 0.9245520013398091,
+        "Rank-5": 0.9958549656673924
+      }
+    }
+  },
+  "full_trace_location": "reproduction/finetune/fast32/intermediate_step4000_full_test (ignored; regenerate with README instructions)",
+  "validation_trace_location": "reproduction/finetune/fast32/intermediate_step4000_val999 (ignored; regenerate with README instructions)"
+}

@@ -5,7 +5,7 @@ NGPU=2
 NNODES=1
 LOG_RANKS=""
 TYPE=""
-RDZV_ENDPOINT="localhost:0"
+RDZV_ENDPOINT="127.0.0.1:0"
 SCRIPT=""
 SCRIPT_ARGS=()
 CONFIG=""
@@ -21,7 +21,7 @@ print_help() {
   echo "  --nnodes <int>                        Number of nodes to launch. Default: 1"
   echo "  --ngpus <int>                         Number of GPUs per node. Default: 2"
   echo "  --log-rank <comma-separated ints>     Comma-separated list of ranks to enable logging. Default: Empty for all ranks."
-  echo "  --rdzv-endpoint <host:port>           Rendezvous endpoint for distributed training. Default: localhost:0"
+  echo "  --rdzv-endpoint <host:port>           Rendezvous endpoint for distributed training. Default: 127.0.0.1:0"
   echo "  --script <script>                     The user script to run before launch."
   echo "  --config <path>                       The path to the config file."
   echo "  --backend <vllm|vllm_async|trtllm>    The backend to use for the job. Default: vllm"
@@ -148,14 +148,54 @@ fi
 LAUNCH_CMD=("$LAUNCH_BINARY")
 
 if [ "$TYPE" == "policy" ]; then
-  LAUNCH_CMD+=(
-    --nproc-per-node="$NGPU"
-    --nnodes="$NNODES"
-    --role rank
-    --tee 3
-    --rdzv_backend c10d
-    --rdzv_endpoint="$RDZV_ENDPOINT"
-  )
+  if [ "${COSMOS_MULTINODE_STATIC_RDZV:-0}" = "1" ]; then
+    if [ "$NNODES" -le 1 ]; then
+      echo "Error: COSMOS_MULTINODE_STATIC_RDZV requires --nnodes > 1"
+      exit 1
+    fi
+    if [ -z "${LEPTON_JOB_WORKER_INDEX:-}" ]; then
+      echo "Error: COSMOS_MULTINODE_STATIC_RDZV requires LEPTON_JOB_WORKER_INDEX"
+      exit 1
+    fi
+    if [ -z "${COSMOS_LEPTON_WORKER0_IP:-}" ]; then
+      echo "Error: COSMOS_MULTINODE_STATIC_RDZV requires COSMOS_LEPTON_WORKER0_IP"
+      exit 1
+    fi
+    STATIC_MASTER_PORT="${COSMOS_MASTER_PORT:-${RDZV_ENDPOINT##*:}}"
+    case "$STATIC_MASTER_PORT" in
+      ''|*[!0-9]*)
+        echo "Error: invalid static rendezvous port '$STATIC_MASTER_PORT'"
+        exit 1
+        ;;
+    esac
+    LAUNCH_CMD+=(
+      --nproc-per-node="$NGPU"
+      --nnodes="$NNODES"
+      --node-rank="$LEPTON_JOB_WORKER_INDEX"
+      --role rank
+      --tee 3
+      --master-addr="$COSMOS_LEPTON_WORKER0_IP"
+      --master-port="$STATIC_MASTER_PORT"
+    )
+  elif [ "${COSMOS_LOCAL_STATIC_RDZV:-0}" = "1" ] && [ "$NNODES" = "1" ]; then
+    LAUNCH_CMD+=(
+      --nproc-per-node="$NGPU"
+      --nnodes=1
+      --role rank
+      --tee 3
+      --master-addr=127.0.0.1
+      --master-port="${COSMOS_MASTER_PORT:-29500}"
+    )
+  else
+    LAUNCH_CMD+=(
+      --nproc-per-node="$NGPU"
+      --nnodes="$NNODES"
+      --role rank
+      --tee 3
+      --rdzv_backend c10d
+      --rdzv_endpoint="$RDZV_ENDPOINT"
+    )
+  fi
 
   if [ -n "$LOG_RANKS" ]; then
     LAUNCH_CMD+=(--local-ranks-filter "$LOG_RANKS")

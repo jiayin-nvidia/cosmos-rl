@@ -1,0 +1,17 @@
+Mode,Model,mAP,Rank-1,Rank-5
+Easy,public SigLIP2,25.49%,27.39%,52.27%
+Easy,public SigLIP2 + CR3 Nano,37.79%,45.97%,69.09%
+Easy,finetuned SigLIP2,65.77%,71.28%,94.36%
+Easy,finetuned SigLIP2 + CR3 Nano,53.02%,51.66%,88.49%
+Medium,public SigLIP2,32.45%,26.73%,49.71%
+Medium,public SigLIP2 + CR3 Nano,51.27%,51.64%,66.11%
+Medium,finetuned SigLIP2,78.71%,77.93%,96.20%
+Medium,finetuned SigLIP2 + CR3 Nano,69.14%,63.00%,92.26%
+Hard,public SigLIP2,44.82%,35.83%,60.66%
+Hard,public SigLIP2 + CR3 Nano,66.57%,64.40%,76.03%
+Hard,finetuned SigLIP2,88.98%,87.18%,98.68%
+Hard,finetuned SigLIP2 + CR3 Nano,81.64%,75.34%,96.68%
+Overall,public SigLIP2,34.47%,30.06%,54.28%
+Overall,public SigLIP2 + CR3 Nano,52.22%,54.21%,70.46%
+Overall,finetuned SigLIP2,78.11%,78.98%,96.46%
+Overall,finetuned SigLIP2 + CR3 Nano,68.29%,63.62%,92.57%

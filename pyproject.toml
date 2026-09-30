@@ -74,6 +74,9 @@ flash-attn = ["torch"]
 include = ["cosmos_rl*"]
 
 [project.optional-dependencies]
+# Dependencies for the PAS CR3 fine-tuning recipe.
+train = ["wandb", "safetensors", "Pillow", "numpy", "einops"]
+
 wfm = [
     "termcolor",
     "aioboto3",

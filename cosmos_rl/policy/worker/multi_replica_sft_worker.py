@@ -530,6 +530,7 @@ class MultiReplicaSFTPolicyWorker(RLPolicyWorker):
                     self.train_step % self.config.train.ckpt.save_freq == 0
                     and self.train_step > 0
                 )
+            do_save = do_save or self.train_step in self.config.train.ckpt.save_steps
             self.do_save = do_save
             val_avg_loss = self.validate(is_last_step=False)
 

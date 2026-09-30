@@ -1,0 +1,126 @@
+{
+  "public": {
+    "source_trace": "/workspace/jiayin/rerank_experiment/results/pas_v31_full_dedup_comparison/scalar_plus_accessories_full_dedup_public_cosmos_reason_depth20_k5/scalar_plus_accessories/query_rankings.jsonl",
+    "metrics": {
+      "easy": {
+        "mAP": {
+          "replayed": "37.79%",
+          "table": "37.79%"
+        },
+        "Rank-1": {
+          "replayed": "45.97%",
+          "table": "45.97%"
+        },
+        "Rank-5": {
+          "replayed": "69.09%",
+          "table": "69.09%"
+        }
+      },
+      "medium": {
+        "mAP": {
+          "replayed": "51.27%",
+          "table": "51.27%"
+        },
+        "Rank-1": {
+          "replayed": "51.64%",
+          "table": "51.64%"
+        },
+        "Rank-5": {
+          "replayed": "66.11%",
+          "table": "66.11%"
+        }
+      },
+      "hard": {
+        "mAP": {
+          "replayed": "66.57%",
+          "table": "66.57%"
+        },
+        "Rank-1": {
+          "replayed": "64.40%",
+          "table": "64.40%"
+        },
+        "Rank-5": {
+          "replayed": "76.03%",
+          "table": "76.03%"
+        }
+      },
+      "overall": {
+        "mAP": {
+          "replayed": "52.22%",
+          "table": "52.22%"
+        },
+        "Rank-1": {
+          "replayed": "54.21%",
+          "table": "54.21%"
+        },
+        "Rank-5": {
+          "replayed": "70.46%",
+          "table": "70.46%"
+        }
+      }
+    },
+    "matched_cells": 12
+  },
+  "finetuned": {
+    "source_trace": "/workspace/jiayin/rerank_experiment/results/pas_v31_full_dedup_comparison/scalar_plus_accessories_full_dedup_finetuned_cosmos_reason_depth20_k5/scalar_plus_accessories/query_rankings.jsonl",
+    "metrics": {
+      "easy": {
+        "mAP": {
+          "replayed": "53.07%",
+          "table": "53.02%"
+        },
+        "Rank-1": {
+          "replayed": "51.83%",
+          "table": "51.66%"
+        },
+        "Rank-5": {
+          "replayed": "88.46%",
+          "table": "88.49%"
+        }
+      },
+      "medium": {
+        "mAP": {
+          "replayed": "69.11%",
+          "table": "69.14%"
+        },
+        "Rank-1": {
+          "replayed": "62.90%",
+          "table": "63.00%"
+        },
+        "Rank-5": {
+          "replayed": "92.22%",
+          "table": "92.26%"
+        }
+      },
+      "hard": {
+        "mAP": {
+          "replayed": "81.59%",
+          "table": "81.64%"
+        },
+        "Rank-1": {
+          "replayed": "75.26%",
+          "table": "75.34%"
+        },
+        "Rank-5": {
+          "replayed": "96.69%",
+          "table": "96.68%"
+        }
+      },
+      "overall": {
+        "mAP": {
+          "replayed": "68.28%",
+          "table": "68.29%"
+        },
+        "Rank-1": {
+          "replayed": "63.61%",
+          "table": "63.62%"
+        },
+        "Rank-5": {
+          "replayed": "92.56%",
+          "table": "92.57%"
+        }
+      }
+    },
+    "matched_cells": 0
+  }
+}

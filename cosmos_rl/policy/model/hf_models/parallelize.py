@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 from typing import Callable, Optional
 
 import torch
@@ -314,6 +315,24 @@ def apply_ddp(
     enable_compile: bool,
     enable_compiled_autograd: bool,
 ):
-    replicate(model, device_mesh=dp_mesh, bucket_cap_mb=100)
+    # Large frozen VLMs can spend minutes broadcasting every base parameter
+    # when composable DDP lazily initializes, even though each replica has
+    # already loaded the same immutable HF checkpoint locally.  In that
+    # explicitly opted-in case, skip DDP's redundant initial state sync; the
+    # ordinary default remains unchanged.  Trainable LoRA parameters must be
+    # initialized deterministically on every replica by the caller.
+    skip_init_sync = os.environ.get("COSMOS_DDP_SKIP_INIT_SYNC", "0") == "1"
+    replicate(
+        model,
+        device_mesh=dp_mesh,
+        bucket_cap_mb=100,
+        init_sync=not skip_init_sync,
+    )
+
+    if skip_init_sync:
+        logger.info(
+            "Applied DDP without redundant initial parameter broadcast; "
+            "replicas must load byte-identical model state locally"
+        )
 
     logger.info("Applied DDP to the model")

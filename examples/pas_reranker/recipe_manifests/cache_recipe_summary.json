@@ -1,0 +1,63 @@
+{
+  "source_pas_image_root": "/workspace/data/PAS_Datasets/NVIDIA_PAS_Filtered_06152026_V3.1_tao_ft_metadata_base_plus_val_test_medium_attr_matched_aug_val20_accessory_v2.1/images",
+  "caches": [
+    {
+      "source_directory": "/workspace/jiayin/cache/pas_cr3_block24_prefix/pas_cr3_block24_prefix_step03906_trainonly750k_star",
+      "image_list": "cache_primary_images.txt",
+      "image_list_sha256": "ea791ef3b60e57096079d0e53f27b01e69eb19ea371fbcdea1073089461138cd",
+      "images": 217743,
+      "world_size": 8,
+      "images_per_rank": [
+        27218,
+        27218,
+        27218,
+        27218,
+        27218,
+        27218,
+        27218,
+        27217
+      ],
+      "model_recorded": "/workspace/jiayin/models/Cosmos3-Nano-VLM",
+      "preprocessing": {
+        "image_patch_size": 16,
+        "spatial_merge_size": 2,
+        "min_pixels": null,
+        "max_pixels": 81920
+      },
+      "dtype": "bfloat16",
+      "feature_layout": "block24_prefix_plus_2_deepstack",
+      "prefix_block": 24,
+      "batch_size": 32,
+      "linear_patch_embed": true
+    },
+    {
+      "source_directory": "/workspace/jiayin/cache/pas_cr3_block24_prefix/pas_cr3_block24_prefix_step03906_top50_supplement4474_clean",
+      "image_list": "cache_supplement_images.txt",
+      "image_list_sha256": "75a5d2fc102095c67dae61808f2a4a877bd51e932c44a2cc4440a41f1e2cabf5",
+      "images": 4474,
+      "world_size": 8,
+      "images_per_rank": [
+        560,
+        560,
+        559,
+        559,
+        559,
+        559,
+        559,
+        559
+      ],
+      "model_recorded": "/tmp/Cosmos3-Nano-VLM-clean",
+      "preprocessing": {
+        "image_patch_size": 16,
+        "spatial_merge_size": 2,
+        "min_pixels": null,
+        "max_pixels": 81920
+      },
+      "dtype": "bfloat16",
+      "feature_layout": "visual_prefix_plus_deepstack",
+      "prefix_block": 24,
+      "batch_size": 32,
+      "linear_patch_embed": true
+    }
+  ]
+}

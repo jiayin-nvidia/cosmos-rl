@@ -717,9 +717,20 @@ class SFTTrainer(LLMTrainer):
         ckpt_total_steps = 0
         train_step = 0
         ckpt_extra_vars = {}
+        # For non-resume LoRA/SFT jobs every DP replica can load the same HF
+        # base and adapter directly from shared storage.  This opt-in path
+        # avoids broadcasting the entire frozen VLM state across nodes, which
+        # is both redundant and fragile on large DP meshes.  Resume still uses
+        # the canonical rank-0 load+broadcast path because optimizer state must
+        # be restored from one authoritative checkpoint.
+        local_hf_load = (
+            os.environ.get("COSMOS_DP_LOCAL_HF_LOAD", "0") == "1"
+            and self.parallel_dims.dp_replicate_enabled
+            and not self.config.train.resume
+        )
         if (
             not self.parallel_dims.dp_replicate_enabled
-        ) or self.parallel_dims.dp_replicate_coord[0] == 0:
+        ) or self.parallel_dims.dp_replicate_coord[0] == 0 or local_hf_load:
             if self.config.train.resume:
                 try:
                     # early init the lr_schedulers to avoid it is not initialized when loading the checkpoint
@@ -736,7 +747,7 @@ class SFTTrainer(LLMTrainer):
             else:
                 self.model_load_from_hf()
 
-        if self.parallel_dims.dp_replicate_enabled:
+        if self.parallel_dims.dp_replicate_enabled and not local_hf_load:
             if self.config.train.resume:
                 ckpt_total_steps = dist_util.broadcast_object_cpu(
                     ckpt_total_steps,
@@ -775,6 +786,14 @@ class SFTTrainer(LLMTrainer):
             )
             logger.info(
                 f"Synchronized {len_params} parameters across data parallel replicas."
+            )
+        elif local_hf_load:
+            # The shared checkpoint is immutable for the lifetime of a job;
+            # once every replica has loaded it, a cheap barrier is sufficient.
+            dist.barrier(group=self.parallel_dims.mesh["dp_replicate"].get_group())
+            logger.info(
+                "Loaded identical HuggingFace model state independently on every "
+                "data-parallel replica; skipped full-state broadcast."
             )
 
         self.set_model_train()

@@ -231,7 +231,14 @@ def inject_lora_adapters(
     lm_head_module_name = "lm_head"
     from cosmos_rl.policy.model.hf_models import HFModel
 
-    if isinstance(model, HFModel):
+    is_hf_model = isinstance(model, HFModel)
+    explicit_hf_lm_head = bool(
+        is_hf_model
+        and isinstance(config.target_modules, list)
+        and "lm_head" in config.target_modules
+    )
+    output_layer = None
+    if is_hf_model:
         # Must enable input require grads for the HFModel to work with LoRA.
         # Otherwise, the model will raise a RuntimeError:
         # `element 0 of tensors does not require grad and does not have a grad_fn`.
@@ -271,6 +278,12 @@ def inject_lora_adapters(
             continue
 
         if isinstance(module, nn.Linear):
+            # HF models may expose the tied output layer through aliases.  A
+            # generic setattr on the first named alias can leave
+            # get_output_embeddings() pointing at the original layer.  Handle
+            # an explicitly requested LM head once through the HF setter below.
+            if explicit_hf_lm_head and module is output_layer:
+                continue
             if match_all_linear or _name_matches(module_name, config.target_modules):
                 # exclude output layer if wildcard match is enabled
                 if match_all_linear and (
@@ -320,6 +333,24 @@ def inject_lora_adapters(
                 setattr(parent, child_name, lora_linear)
                 replaced.append(module_name)
                 replaced_names.append(module_name)
+
+    if explicit_hf_lm_head:
+        output_layer = model.model.get_output_embeddings()
+        if not isinstance(output_layer, nn.Linear):
+            raise TypeError(
+                "Explicit lm_head LoRA requires HF get_output_embeddings() "
+                f"to return nn.Linear, got {type(output_layer).__name__}"
+            )
+        lora_output = LoraInjectedLinear.from_linear(
+            base=output_layer,
+            r=config.r,
+            lora_alpha=config.lora_alpha,
+            lora_dropout=config.lora_dropout,
+            use_rslora=config.use_rslora,
+        )
+        model.model.set_output_embeddings(lora_output)
+        replaced.append("model.lm_head")
+        replaced_names.append("model.lm_head")
 
     if not replaced:
         raise RuntimeError(
@@ -376,9 +407,45 @@ def mark_only_lora_as_trainable(model: nn.Module, config: LoraConfig) -> None:
 
 
 def reinitialize_lora_params(model: nn.Module) -> None:
-    for m in model.modules():
+    local_reinit = os.environ.get("COSMOS_LORA_LOCAL_REINIT", "0") == "1"
+    for module_index, m in enumerate(model.modules()):
         if isinstance(m, LoraInjectedLinear):
-            m.reinitialize_lora_params()
+            if not local_reinit:
+                m.reinitialize_lora_params()
+                continue
+
+            # DTensor random initialization performs a cross-rank broadcast to
+            # coordinate its RNG state.  On a pure DP-replicate mesh every
+            # rank owns the same full local LoRA tensor, so using the same
+            # per-module seed locally is equivalent and avoids a fragile
+            # startup collective.  B remains zero, hence this also preserves
+            # the exact initial no-op property of LoRA.
+            a_weight = m.lora_A.weight
+            b_weight = m.lora_B.weight
+            if hasattr(a_weight, "placements"):
+                mesh_shape = tuple(a_weight.device_mesh.shape)
+                if any(
+                    not placement.is_replicate() and mesh_size != 1
+                    for placement, mesh_size in zip(
+                        a_weight.placements, mesh_shape, strict=True
+                    )
+                ):
+                    raise RuntimeError(
+                        "COSMOS_LORA_LOCAL_REINIT requires replicated LoRA parameters "
+                        "(degenerate size-1 shard dimensions are allowed); got "
+                        f"placements={a_weight.placements}, mesh_shape={mesh_shape}"
+                    )
+                a_local = a_weight.to_local()
+                b_local = b_weight.to_local()
+            else:
+                a_local = a_weight
+                b_local = b_weight
+            generator = torch.Generator(device=a_local.device)
+            generator.manual_seed(0xC05A05 + module_index)
+            nn.init.kaiming_uniform_(
+                a_local, a=math.sqrt(5), generator=generator
+            )
+            nn.init.zeros_(b_local)
 
 
 @torch.no_grad()

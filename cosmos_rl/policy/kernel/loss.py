@@ -17,7 +17,7 @@ def liger_cross_entropy(
 ) -> torch.Tensor:
     from liger_kernel.ops.cross_entropy import LigerCrossEntropyFunction
 
-    loss, _, _ = LigerCrossEntropyFunction.apply(
+    result = LigerCrossEntropyFunction.apply(
         input,
         target,
         None,
@@ -29,7 +29,9 @@ def liger_cross_entropy(
         False,  # return_z_loss
         False,  # return_token_accuracy
     )
-    return loss
+    # Liger <=0.5 returned three values, while newer releases also return
+    # predicted tokens.  Cosmos only consumes the scalar loss.
+    return result[0] if isinstance(result, tuple) else result
 
 
 def fused_linear_cross_entropy(
@@ -44,7 +46,7 @@ def fused_linear_cross_entropy(
         LigerFusedLinearCrossEntropyFunction,
     )
 
-    loss, _, _ = LigerFusedLinearCrossEntropyFunction.apply(
+    result = LigerFusedLinearCrossEntropyFunction.apply(
         input,
         lin_weight,  # linear weight
         target,
@@ -60,8 +62,9 @@ def fused_linear_cross_entropy(
         False,  # use_token_scaling
         False,  # return_token_accuracy
     )
-
-    return loss
+    # Keep this wrapper compatible across the three- and four-output Liger
+    # APIs.  The auxiliary outputs are disabled above and are not used here.
+    return result[0] if isinstance(result, tuple) else result
 
 
 class CrossEntropyType(Enum):

@@ -1,0 +1,33 @@
+Mode,Model,mAP,Rank-1,Rank-5
+Easy,public SigLIP2,25.49%,27.39%,52.27%
+Easy,public SigLIP 2 + CR3 Nano,37.79%,45.97%,69.09%
+Easy,finetuned SigLIP2,65.77%,71.28%,94.36%
+Easy,finetuned SigLIP 2 + zero-shot CR3 Nano (reranking),53.02%,51.66%,88.49%
+Easy,finedtuned SigLIP2 + finetuned CR3 Nano (reranking),67.83%,72.84%,95.33%
+Easy,"finedtuned SigLIP2 + finetuned CR3 Nano (fusion, validation weight alpha = 0.31788)",71.20%,77.75%,96.66%
+Easy,"finetuned SigLIP 2 + zero-shot CR3 Nano (fusion, best weight)",67.48%,73.70%,95.37%
+Easy,finetuned SigLIP 2 + CR3 Nano (binary CR3),66.07%,72.07%,94.34%
+Medium,public SigLIP2,32.45%,26.73%,49.71%
+Medium,public SigLIP 2 + CR3 Nano,51.27%,51.64%,66.11%
+Medium,finetuned SigLIP2,78.71%,77.93%,96.20%
+Medium,finetuned SigLIP 2 + CR3 Nano (reranking),69.14%,63.00%,92.26%
+Medium,finedtuned SigLIP2 + finetuned CR3 Nano (reranking),81.48%,80.43%,97.12%
+Medium,"finedtuned SigLIP2 + finetuned CR3 Nano (fusion, validation weight)",84%,84.52%,98.03%
+Medium,"finetuned SigLIP 2 + CR3 Nano (fusion, best weight)",80.91%,81.14%,97.17%
+Medium,finetuned SigLIP 2 + CR3 Nano (binary CR3),78.91%,78.61%,95.88%
+Hard,public SigLIP2,44.82%,35.83%,60.66%
+Hard,public SigLIP 2 + CR3 Nano,66.57%,64.40%,76.03%
+Hard,finetuned SigLIP2,88.98%,87.18%,98.68%
+Hard,finetuned SigLIP 2 + CR3 Nano (reranking),81.64%,75.34%,96.68%
+Hard,finedtuned SigLIP2 + finetuned CR3 Nano (reranking),91.67%,90.16%,99.27%
+Hard,"finedtuned SigLIP2 + finetuned CR3 Nano (fusion, validation weight)",92.94%,92.47%,99.56%
+Hard,"finetuned SigLIP 2 + CR3 Nano (fusion, best weight)",90.57%,89.56%,99.25%
+Hard,finetuned SigLIP 2 + CR3 Nano (binary CR3),89.09%,87.54%,98.53%
+Overall,public SigLIP2,34.47%,30.06%,54.28%
+Overall,public SigLIP 2 + CR3 Nano,52.22%,54.21%,70.46%
+Overall,finetuned SigLIP2,78.11%,78.98%,96.46%
+Overall,finetuned SigLIP 2 + CR3 Nano (reranking),68.29%,63.62%,92.57%
+Overall,finedtuned SigLIP2 + finetuned CR3 Nano (reranking),80.63%,81.35%,97.29%
+Overall,"finedtuned SigLIP2 + finetuned CR3 Nano (fusion, validation weight)",82.99%,85.09%,98.12%
+Overall,"finetuned SigLIP 2 + CR3 Nano (fusion, best weight)",79.94%,81.65%,97.31%
+Overall,finetuned SigLIP 2 + CR3 Nano (binary CR3),78.31%,79.59%,96.30%

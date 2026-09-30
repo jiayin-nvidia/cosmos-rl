@@ -240,6 +240,10 @@ class CheckpointConfig(BaseModel):
     save_freq: int = Field(
         default=20, description="Checkpoint save frequency for training steps"
     )
+    save_steps: List[int] = Field(
+        default_factory=list,
+        description="Additional exact positive training steps at which to save checkpoints.",
+    )
     save_freq_in_epoch: int = Field(
         default=0,
         description="Checkpoint save frequency for training epochs. Default to 0 (disabled).",
@@ -280,6 +284,10 @@ class CheckpointConfig(BaseModel):
 
     @model_validator(mode="after")
     def check_params_value(self):
+        if any(step <= 0 for step in self.save_steps):
+            raise ValueError(f"save_steps must contain only positive steps, got {self.save_steps}")
+        if len(set(self.save_steps)) != len(self.save_steps):
+            raise ValueError(f"save_steps must not contain duplicates, got {self.save_steps}")
         if self.upload_s3:
             if self.upload_s3 not in ["final", "all"]:
                 raise ValueError(

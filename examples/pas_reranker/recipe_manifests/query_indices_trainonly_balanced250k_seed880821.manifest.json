@@ -1,0 +1,21 @@
+{
+  "pairs_file": "/workspace/data/PAS_Datasets/NVIDIA_PAS_Filtered_06152026_V3.1_tao_ft_metadata_base_plus_val_test_medium_attr_matched_aug_val20_accessory_v2.1/train_pairs.json",
+  "selection": "train_only_equal_query_type_reservoir",
+  "seed": 880821,
+  "per_type": 250000,
+  "total_queries": 750000,
+  "scanned_rows": 1999953,
+  "eligible_train_queries": {
+    "easy": 581649,
+    "medium": 633582,
+    "hard": 666533
+  },
+  "excluded_duplicate_caption_queries": {
+    "easy": 85002,
+    "medium": 33069,
+    "hard": 118
+  },
+  "caption_denylist_source": "/workspace/jiayin/rerank_experiment/artifacts/pas_v31_val_query_subset_scalar_plus_accessories_balanced_999/query_subset.json",
+  "validation_labels_or_metrics_read": false,
+  "output": "/workspace/jiayin/cosmos-rl/data/pas_cr3_step03906/query_indices_trainonly_balanced250k_seed880821.json"
+}

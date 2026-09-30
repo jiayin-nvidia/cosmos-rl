@@ -329,6 +329,28 @@ class LLMTrainer(Trainer):
         Returns:
             len_params (int): The number of parameters synced.
         """
+        # A few VLM projection weights are hundreds of millions of elements.
+        # Broadcasting one such tensor in a single NCCL work item is fragile on
+        # multi-node IB fabrics (and can trip retry-exceeded errors even though
+        # the model and optimizer state are otherwise healthy).  Keep the
+        # default behavior unchanged, but allow affected jobs to bound each
+        # collective through a job-local environment variable.  Sender and
+        # receivers traverse the identical contiguous slices, so this preserves
+        # the exact state and collective ordering.
+        sync_chunk_numel = int(os.environ.get("COSMOS_SYNC_CHUNK_NUMEL", "0"))
+
+        def transfer(tensor: torch.Tensor, hook: callable) -> None:
+            if (
+                sync_chunk_numel > 0
+                and tensor.numel() > sync_chunk_numel
+                and tensor.is_contiguous()
+            ):
+                flat = tensor.view(-1)
+                for begin in range(0, flat.numel(), sync_chunk_numel):
+                    hook(flat.narrow(0, begin, min(sync_chunk_numel, flat.numel() - begin)))
+            else:
+                hook(tensor)
+
         len_params = 0
         if self.parallel_dims.pp_enabled:
             state_dict = {}
@@ -363,9 +385,9 @@ class LLMTrainer(Trainer):
                     self.device, dest_name, obj, in_place=obj.is_cuda
                 )
                 if is_send:
-                    send_hook(local_view)
+                    transfer(local_view, send_hook)
                 else:
-                    recv_hook(local_view)
+                    transfer(local_view, recv_hook)
                     if isinstance(obj, torch.distributed.tensor.DTensor):
                         to_write = obj.to_local()
                     else:
@@ -386,10 +408,10 @@ class LLMTrainer(Trainer):
                 continue
             if is_send:
                 # nccl send
-                send_hook(local_view)
+                transfer(local_view, send_hook)
             else:
                 # nccl recv
-                recv_hook(local_view)
+                transfer(local_view, recv_hook)
                 optimizer_state[dest_name] = extract_from_cuda_tensor(
                     self.device,
                     dest_name,
@@ -409,10 +431,10 @@ class LLMTrainer(Trainer):
                 local_view = wrap_to_cuda_tensor(self.device, dest_name, obj)
                 if is_send:
                     # nccl send
-                    send_hook(local_view)
+                    transfer(local_view, send_hook)
                 else:
                     # nccl recv
-                    recv_hook(local_view)
+                    transfer(local_view, recv_hook)
                     lr_sheduler_state[dest_name] = extract_from_cuda_tensor(
                         self.device,
                         dest_name,
@@ -430,10 +452,10 @@ class LLMTrainer(Trainer):
             local_view = wrap_to_cuda_tensor(self.device, dest_name, obj)
             if is_send:
                 # nccl send
-                send_hook(local_view)
+                transfer(local_view, send_hook)
             else:
                 # nccl recv
-                recv_hook(local_view)
+                transfer(local_view, recv_hook)
                 rng_state[dest_name] = extract_from_cuda_tensor(
                     self.device, dest_name, obj, local_view
                 )
